@@ -1,0 +1,2340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cumberland Mutual — The Fire Brigade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #D4A84A;
+  --gold-light: #E5BE5E;
+  --gold-dark: #A8842E;
+  --gold-deep: #7A5F1E;
+  --cream: #F1E7CD;
+  --cream-warm: #E8DBB7;
+  --cream-dark: #D4C69B;
+  --ink: #1F1C15;
+  --ink-soft: #3A3426;
+  --burgundy: #7A1F28;
+  --fire-hot: #FFD54F;
+  --fire: #F4823C;
+  --ember: #D63A2A;
+  --night-1: #0F1220;
+  --night-2: #1A1A2E;
+  --night-3: #251F1A;
+  --water: #9FD1E8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(212,168,74,0.10) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(122,31,40,0.06) 0%, transparent 45%),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(31,28,21,0.012) 3px,
+      rgba(31,28,21,0.012) 4px
+    );
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* vignette */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(31,28,21,0.22) 100%);
+  pointer-events: none;
+  z-index: 100;
+}
+
+.frame {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 18px 20px 14px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+}
+
+/* ───── Header ledger ───── */
+header {
+  border: 2px double var(--ink);
+  padding: 12px 22px 14px;
+  background: linear-gradient(180deg, rgba(241,231,205,0.85) 0%, rgba(232,219,183,0.85) 100%);
+  position: relative;
+  box-shadow: inset 0 0 40px rgba(122,95,30,0.08);
+}
+
+.masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  border-bottom: 1px solid rgba(31,28,21,0.3);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.marque {
+  font-family: 'IM Fell English SC', serif;
+  font-size: 22px;
+  letter-spacing: 3px;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.marque .amp {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 20px;
+  color: var(--gold-deep);
+  letter-spacing: 0;
+  margin: 0 4px;
+}
+
+.est {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--gold-deep);
+  text-align: right;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 24px;
+  align-items: end;
+}
+
+.stat-block { font-family: 'IM Fell English', serif; }
+.stat-block.center { text-align: center; }
+.stat-block.right { text-align: right; }
+
+.stat-label {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 3px;
+}
+
+.stat-value {
+  font-family: 'IM Fell English SC', serif;
+  font-size: 19px;
+  letter-spacing: 1px;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.stat-value.danger { color: var(--burgundy); }
+
+.retention-meter {
+  width: 100%;
+  height: 14px;
+  background: var(--cream-dark);
+  border: 1px solid var(--ink);
+  position: relative;
+  margin-top: 5px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(31,28,21,0.3);
+}
+
+.retention-fill {
+  height: 100%;
+  background:
+    linear-gradient(90deg,
+      var(--gold-light) 0%,
+      var(--gold) 35%,
+      var(--gold-dark) 65%,
+      var(--burgundy) 100%);
+  width: 0%;
+  transition: width 0.5s ease;
+  position: relative;
+}
+
+.retention-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent 0px,
+    transparent 6px,
+    rgba(255,255,255,0.08) 6px,
+    rgba(255,255,255,0.08) 8px
+  );
+}
+
+.retention-marks {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  pointer-events: none;
+}
+.retention-marks span {
+  flex: 1;
+  border-right: 1px solid rgba(31,28,21,0.35);
+}
+.retention-marks span:last-child { border: none; }
+
+/* ───── Game arena ───── */
+.arena-wrap {
+  flex: 1;
+  margin-top: 14px;
+  border: 2px solid var(--ink);
+  background: linear-gradient(180deg,
+    var(--night-1) 0%,
+    var(--night-2) 45%,
+    var(--night-3) 75%,
+    #1a130a 100%);
+  position: relative;
+  overflow: hidden;
+  min-height: 520px;
+  height: calc(100vh - 250px);
+  box-shadow:
+    0 0 0 4px var(--cream),
+    0 0 0 5px var(--ink),
+    0 10px 30px rgba(31,28,21,0.4);
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+.corner {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-color: var(--gold);
+  border-style: solid;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0.85;
+}
+.corner.tl { top: 6px; left: 6px; border-width: 2px 0 0 2px; }
+.corner.tr { top: 6px; right: 6px; border-width: 2px 2px 0 0; }
+.corner.bl { bottom: 6px; left: 6px; border-width: 0 0 2px 2px; }
+.corner.br { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; }
+
+/* Ticker for claims */
+.ticker {
+  position: absolute;
+  top: 10px;
+  left: 40px;
+  right: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: none;
+  z-index: 5;
+  align-items: center;
+}
+
+.ticker-item {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--cream);
+  background: rgba(15,18,32,0.8);
+  border: 1px solid var(--gold-dark);
+  padding: 4px 14px;
+  animation: tickerFade 3.5s forwards;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  text-shadow: 0 0 8px rgba(244,130,60,0.3);
+}
+
+.ticker-item.bad { border-color: var(--ember); color: #FFB5A8; }
+.ticker-item.good { border-color: var(--gold); color: var(--fire-hot); }
+
+@keyframes tickerFade {
+  0% { opacity: 0; transform: translateY(-10px); }
+  15% { opacity: 1; transform: translateY(0); }
+  85% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-6px); }
+}
+
+/* ───── Guy Carpenter telegrams (upper-right) ───── */
+.telegram-stack {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 7;
+  pointer-events: none;
+  max-width: 290px;
+  width: calc(50% - 30px);
+  min-width: 240px;
+}
+
+.telegram {
+  background:
+    linear-gradient(180deg, #F5EBCF 0%, #E6D9B5 100%);
+  border: 1.5px solid var(--ink);
+  padding: 10px 14px 10px;
+  font-family: 'IM Fell English', serif;
+  color: var(--ink);
+  box-shadow:
+    4px 4px 0 rgba(31,28,21,0.35),
+    inset 0 0 24px rgba(122,95,30,0.12);
+  position: relative;
+  transform-origin: top right;
+  animation:
+    telegramIn 0.5s cubic-bezier(.2,.8,.3,1.2) both,
+    telegramSettle 8.5s 0.5s forwards;
+}
+
+/* Faux stamped perforations down the left edge */
+.telegram::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 8px;
+  bottom: 8px;
+  width: 1.5px;
+  background-image: radial-gradient(circle, rgba(31,28,21,0.4) 0.8px, transparent 1.2px);
+  background-size: 1.5px 6px;
+  background-repeat: repeat-y;
+}
+
+.telegram-header {
+  border-bottom: 1.5px solid var(--ink);
+  padding-bottom: 5px;
+  margin-bottom: 7px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.telegram-title {
+  font-family: 'IM Fell English SC', serif;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  color: var(--ink);
+}
+
+.telegram-from {
+  font-style: italic;
+  font-size: 10.5px;
+  color: var(--gold-deep);
+  white-space: nowrap;
+}
+
+.telegram-body {
+  font-size: 12.5px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.telegram-body .stop {
+  color: var(--gold-deep);
+  font-weight: normal;
+  letter-spacing: 1px;
+  margin: 0 1px;
+}
+
+.telegram-footer {
+  font-size: 9.5px;
+  font-style: italic;
+  color: var(--gold-deep);
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px dashed rgba(31,28,21,0.4);
+  text-transform: none;
+  letter-spacing: 0.3px;
+  display: flex;
+  justify-content: space-between;
+}
+
+@keyframes telegramIn {
+  0%   { opacity: 0; transform: translateX(120px) rotate(4deg); }
+  70%  { opacity: 1; transform: translateX(-6px) rotate(-1.8deg); }
+  100% { opacity: 1; transform: translateX(0) rotate(-1.2deg); }
+}
+
+@keyframes telegramSettle {
+  0%, 93%  { opacity: 1; transform: rotate(-1.2deg); }
+  100%     { opacity: 0; transform: translateX(20px) rotate(-3deg); }
+}
+
+.telegram.urgent {
+  background: linear-gradient(180deg, #F7E5C8 0%, #E9CFA0 100%);
+  border-color: var(--burgundy);
+  box-shadow:
+    4px 4px 0 rgba(122,31,40,0.35),
+    inset 0 0 24px rgba(122,31,40,0.12);
+}
+.telegram.urgent .telegram-title { color: var(--burgundy); }
+.telegram.urgent .telegram-title::before {
+  content: '⚠ ';
+  color: var(--burgundy);
+}
+
+/* ───── Overlays ───── */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(31,28,21,0.82) 0%, rgba(15,18,32,0.95) 100%);
+  z-index: 10;
+  padding: 20px;
+  backdrop-filter: blur(3px);
+  /* Scrollable: use block layout so the card can be taller than viewport */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: block;
+}
+
+.card {
+  background:
+    linear-gradient(180deg, var(--cream) 0%, var(--cream-warm) 100%);
+  border: 3px double var(--ink);
+  padding: 30px 40px 28px;
+  text-align: center;
+  max-width: 540px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(15,18,32,0.6);
+  /* Horizontally center + vertically center (when fits) or top-align (when overflows) */
+  margin: 20px auto;
+}
+
+/* When content is shorter than viewport, center it nicely */
+@media (min-height: 700px) {
+  .card { margin: max(20px, calc(50vh - 50% - 40px)) auto 20px; }
+}
+
+.card::before,
+.card::after {
+  content: '❧';
+  position: absolute;
+  font-size: 22px;
+  color: var(--gold-dark);
+  left: 50%;
+  transform: translateX(-50%);
+}
+.card::before { top: 10px; }
+.card::after { bottom: 10px; transform: translateX(-50%) rotate(180deg); }
+
+.card h1 {
+  font-family: 'IM Fell English SC', serif;
+  font-size: clamp(26px, 4.4vw, 38px);
+  letter-spacing: 4px;
+  margin-bottom: 6px;
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+.card h1 em {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  letter-spacing: 0;
+  color: var(--gold-deep);
+  font-weight: normal;
+}
+
+.card .subtitle {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--gold-deep);
+  margin-bottom: 22px;
+  letter-spacing: 0.5px;
+}
+
+.card p {
+  font-size: 17px;
+  line-height: 1.55;
+  margin-bottom: 14px;
+  color: var(--ink-soft);
+}
+
+.rules {
+  text-align: left;
+  font-size: 15px;
+  line-height: 1.55;
+  margin: 14px 0 18px;
+  padding: 12px 18px;
+  border-left: 3px solid var(--gold-dark);
+  background: rgba(212,168,74,0.1);
+  color: var(--ink-soft);
+}
+
+.rules-title {
+  font-family: 'IM Fell English SC', serif;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.rules strong { color: var(--burgundy); font-weight: 600; }
+
+.btn {
+  font-family: 'IM Fell English SC', serif;
+  font-size: 20px;
+  letter-spacing: 4px;
+  background: var(--gold);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  padding: 16px 44px;
+  cursor: pointer;
+  margin-top: 18px;
+  transition: transform 0.1s, background 0.15s;
+  position: relative;
+  box-shadow: 5px 5px 0 var(--ink);
+  animation: btnPulse 2.2s ease-in-out infinite;
+  font-weight: normal;
+  text-transform: none;
+}
+
+@keyframes btnPulse {
+  0%, 100% {
+    box-shadow: 5px 5px 0 var(--ink), 0 0 0 0 rgba(212,168,74,0.6);
+  }
+  50% {
+    box-shadow: 5px 5px 0 var(--ink), 0 0 0 14px rgba(212,168,74,0);
+  }
+}
+
+.btn:hover {
+  background: var(--ink);
+  color: var(--gold);
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 var(--gold-dark);
+  animation: none;
+}
+
+.btn:active {
+  transform: translate(5px, 5px);
+  box-shadow: 0 0 0 var(--ink);
+  animation: none;
+}
+
+.final-ledger {
+  font-family: 'IM Fell English', serif;
+  text-align: left;
+  font-size: 15px;
+  line-height: 1.8;
+}
+.final-ledger div {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dotted rgba(31,28,21,0.3);
+  padding: 2px 0;
+}
+.final-ledger div:last-child {
+  border-bottom: none;
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 2px solid var(--ink);
+  font-family: 'IM Fell English SC', serif;
+  letter-spacing: 1px;
+}
+
+footer {
+  margin-top: 10px;
+  text-align: center;
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--gold-deep);
+  letter-spacing: 0.5px;
+}
+
+.hidden { display: none !important; }
+
+/* Wave banner */
+.wave-banner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'IM Fell English SC', serif;
+  font-size: 48px;
+  letter-spacing: 8px;
+  color: var(--gold);
+  text-shadow: 0 0 20px rgba(15,18,32,0.9), 0 0 40px rgba(244,130,60,0.3);
+  animation: waveIn 2.2s forwards;
+  pointer-events: none;
+  z-index: 6;
+  text-align: center;
+}
+.wave-banner small {
+  display: block;
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: var(--cream);
+  margin-top: 8px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+
+@keyframes waveIn {
+  0%   { opacity: 0; transform: translate(-50%,-50%) scale(0.6); }
+  20%  { opacity: 1; transform: translate(-50%,-50%) scale(1.05); }
+  75%  { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%,-50%) scale(0.95); }
+}
+
+/* Meter shake when retention grows */
+.shake { animation: shake 0.35s; }
+@keyframes shake {
+  0%,100% { transform: translate(0,0); }
+  25% { transform: translate(-3px, 1px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-2px, 0); }
+}
+
+@media (max-width: 640px) {
+  .marque { font-size: 17px; letter-spacing: 2px; }
+  .est { font-size: 11px; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .stat-block.center { display: none; }
+  .card { padding: 28px 24px 24px; }
+  .wave-banner { font-size: 32px; letter-spacing: 4px; }
+}
+</style>
+</head>
+<body>
+
+<div class="frame">
+
+  <header>
+    <div class="masthead">
+      <div class="marque">Cumberland Mutual <span class="amp">&amp;</span> Fire Brigade</div>
+      <div class="est">Est. MDCCCXLIV · Bridgeton, N.J.<br>Policy &amp; Peril Division</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-block">
+        <div class="stat-label">Ledger · Claims Paid</div>
+        <div class="stat-value" id="claimsPaid">$0</div>
+        <div class="retention-meter" id="retentionMeter">
+          <div class="retention-fill" id="retentionFill"></div>
+          <div class="retention-marks">
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+      <div class="stat-block center">
+        <div class="stat-label">Retention</div>
+        <div class="stat-value">$750,000</div>
+      </div>
+      <div class="stat-block right">
+        <div class="stat-label">Alarm Bell</div>
+        <div class="stat-value" id="waveDisplay">—</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="arena-wrap">
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <canvas id="game"></canvas>
+    <div class="ticker" id="ticker"></div>
+    <div class="telegram-stack" id="telegramStack"></div>
+
+    <div class="overlay" id="startScreen">
+      <div class="card">
+        <h1>The Fire <em>Brigade</em></h1>
+        <div class="subtitle">A recreation in Property &amp; Peril &middot; Bridgeton, N.J.</div>
+        <p>Calamity has struck the insured. Flames have broken out across downtown Bridgeton — at Potter's Tavern, the Broad Street Church, the Cumberland Library — and fiery meteors now fall from the heavens besides.</p>
+        <p>You are the Brigade Chief. Preserve the company before its losses exhaust the <strong style="color:var(--burgundy)">$750,000 retention</strong>.</p>
+        <div class="rules">
+          <div class="rules-title">Standing Orders</div>
+          • <strong>Tap a fire</strong> to direct the pump's water upon it.<br>
+          • <strong>Tap a meteor</strong> to strike it from the sky before it lands.<br>
+          • Fires <strong>grow fiercer</strong> each moment — a Grade V inferno consumes the property entire.<br>
+          • Endure <strong>VIII alarms</strong> without exceeding the retention.
+        </div>
+        <button class="btn" id="startBtn">Sound the Alarm</button>
+      </div>
+    </div>
+
+    <div class="overlay hidden" id="endScreen">
+      <div class="card">
+        <h1 id="endTitle">Retention Breached</h1>
+        <div class="subtitle" id="endSubtitle">Reinsurance has been triggered</div>
+        <p id="endMessage">The company's exposure has exceeded its attachment. The treaty reinsurers now bear the excess.</p>
+        <div class="rules">
+          <div class="rules-title">Final Ledger</div>
+          <div class="final-ledger" id="finalLedger"></div>
+        </div>
+        <button class="btn" id="restartBtn">Draft Anew</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    A mutual assurance society against loss by fire — offered in good faith to the insured.
+  </footer>
+
+</div>
+
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════
+   Canvas setup
+═══════════════════════════════════════════════════ */
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+let W = 0, H = 0, DPR = 1;
+
+function resizeCanvas() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width  = Math.floor(rect.width  * DPR);
+  canvas.height = Math.floor(rect.height * DPR);
+  canvas.style.width  = rect.width + 'px';
+  canvas.style.height = rect.height + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  W = rect.width;
+  H = rect.height;
+  if (state.started) layoutWorld();
+}
+window.addEventListener('resize', resizeCanvas);
+
+/* ═══════════════════════════════════════════════════
+   State
+═══════════════════════════════════════════════════ */
+const RETENTION = 750000;
+const VICTORY_WAVE = 8;
+const WAVE_DURATION = 42000; // ms
+
+const BUILDING_TYPES = [
+  { name: "Potter's Tavern",    value: 140000, w: 102, h: 86  }, // 1750s Revolutionary-era tavern
+  { name: "Big John's Pizza",   value:  85000, w: 90,  h: 80  }, // 90 E Commerce Street
+  { name: "Terrigno's Bakery",  value:  95000, w: 92,  h: 82  }, // 632 N Pearl Street
+  { name: "Gallery 50",         value: 110000, w: 88,  h: 96  }, // Downtown art gallery
+  { name: "Broad St. Church",   value: 185000, w: 98,  h: 118 }, // Old Broad Street Presbyterian, 1795
+  { name: "The Nail House",     value: 130000, w: 104, h: 88  }, // Cumberland Nail & Iron Works, c.1815
+  { name: "Cumberland Library", value: 160000, w: 112, h: 100 }, // Former Cumberland National Bank, 1816
+];
+
+const state = {
+  started: false,
+  running: false,
+  ended:   false,
+  wave: 0,
+  waveTimer: 0,
+  claims: 0,
+  firesExtinguished: 0,
+  propertiesLost: 0,
+  meteorsShotDown: 0,
+  meteorsLanded: 0,
+  totalSprays: 0,
+  fires: [],
+  meteors: [],
+  streams: [],
+  smokes: [],
+  popups: [],
+  flashes: [],
+  buildings: [],
+  stars: [],
+  telegramsSent: new Set(),
+  spawnTimer: 0,
+  meteorTimer: 0,
+  meteorInterval: 8000,
+  spawnInterval: 4500,
+  growthInterval: 3600,
+  lastTime: 0,
+  pumpX: 0,
+  pumpY: 0,
+  pumpTargetX: 0,
+  pumpBob: 0,
+  pumpRecoil: 0,
+};
+
+/* ═══════════════════════════════════════════════════
+   Utilities
+═══════════════════════════════════════════════════ */
+function rand(a, b) { return a + Math.random() * (b - a); }
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+const ROMAN = ['—','I','II','III','IV','V','VI','VII','VIII','IX','X'];
+function toRoman(n) { return ROMAN[n] || 'X+'; }
+function fmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+
+function flash(msg, kind) {
+  const t = document.getElementById('ticker');
+  const el = document.createElement('div');
+  el.className = 'ticker-item' + (kind ? ' ' + kind : '');
+  el.textContent = msg;
+  t.appendChild(el);
+  setTimeout(() => el.remove(), 3600);
+}
+
+function banner(title, sub) {
+  const el = document.createElement('div');
+  el.className = 'wave-banner';
+  el.innerHTML = title + (sub ? '<small>' + sub + '</small>' : '');
+  canvas.parentElement.appendChild(el);
+  setTimeout(() => el.remove(), 2200);
+}
+
+/* ═══════════════════════════════════════════════════
+   Guy Carpenter telegrams
+   (Increasingly panicked messages from the reinsurance broker
+   as losses eat into the $750k retention)
+═══════════════════════════════════════════════════ */
+const TELEGRAMS = [
+  { at: 0.13, body:
+    "SWISS RE CAT MODELER FLAGGED BRIDGETON ZIP CODE THIS MORNING STOP " +
+    "EVERYTHING QUIET ON YOUR END STOP QUERY ANY UNUSUAL ACTIVITY STOP"
+  },
+  { at: 0.28, body:
+    "MUNICH RE INQUIRING WHETHER BRIDGETON IS ON FIRE STOP IS IT STOP " +
+    "PLEASE ADVISE BEFORE LUNCH STOP"
+  },
+  { at: 0.42, body:
+    "LLOYDS SYNDICATES 2020 AND 33 REQUEST URGENT UPDATE STOP " +
+    "ALSO SYNDICATE 510 STOP HAVING DIFFICULTY FIELDING ALL THE CALLS STOP"
+  },
+  { at: 0.56, body:
+    "HANNOVER RE CEDING MANAGER ASKS IF SPRINKLERS HAVE BEEN CONSIDERED STOP " +
+    "I SAID YES STOP NOT SURE IF THAT WAS TRUE STOP",
+    urgent: true
+  },
+  { at: 0.68, body:
+    "SWISS RE HAS OPENED GROUP CHAT ABOUT YOU STOP " +
+    "CONTENTS NOT FLATTERING STOP " +
+    "I ADDED A LAUGHING EMOJI TO SHOW SOLIDARITY STOP",
+    urgent: true
+  },
+  { at: 0.79, body:
+    "URGENT STOP RETRO PANEL BELIEVES METEORS REFERENCE IN BORDEREAU IS TYPO STOP " +
+    "CONFIRM WHETHER LITERAL METEORS STOP ACTUARIES DO NOT MODEL LITERAL METEORS STOP",
+    urgent: true
+  },
+  { at: 0.89, body:
+    "THREE REINSURERS NOW ON CALL REGARDING YOU STOP I WAS NOT INVITED STOP " +
+    "PLEASE TELL ME IT IS UNDER CONTROL STOP TELL ME IT IS UNDER CONTROL STOP",
+    urgent: true
+  },
+  { at: 0.96, body:
+    "EVERY CAT UNDERWRITER ON THIS CONTINENT IS NOW LOOKING AT BRIDGETON STOP " +
+    "BERKSHIRE JUST JOINED THE CALL STOP WARREN ASKED IF YOU ARE SERIOUS STOP",
+    urgent: true
+  },
+];
+
+let telegramSerial = 4471;
+
+function showTelegram(body, opts) {
+  opts = opts || {};
+  const stack = document.getElementById('telegramStack');
+  if (!stack) return;
+
+  const el = document.createElement('div');
+  el.className = 'telegram' + (opts.urgent ? ' urgent' : '');
+
+  const serial = telegramSerial++;
+  const formatted = body
+    .split(/\bSTOP\b/)
+    .map(s => s.trim())
+    .filter(s => s.length > 0)
+    .map(s => s + ' <span class="stop">STOP</span>')
+    .join(' ');
+
+  el.innerHTML = `
+    <div class="telegram-header">
+      <span class="telegram-title">Telegram</span>
+      <span class="telegram-from">Guy Carpenter &amp; Co.</span>
+    </div>
+    <div class="telegram-body">${formatted}</div>
+    <div class="telegram-footer">
+      <span>№ ${serial}</span>
+      <span>Bridgeton Exchange</span>
+    </div>
+  `;
+
+  // Limit stack to 3 visible at once
+  while (stack.children.length >= 3) {
+    stack.removeChild(stack.firstChild);
+  }
+
+  stack.appendChild(el);
+
+  // Auto-remove after animation completes (telegramSettle runs 8.5s + 0.5s delay)
+  setTimeout(() => {
+    if (el.parentNode) el.parentNode.removeChild(el);
+  }, 9500);
+}
+
+function checkTelegrams() {
+  const pct = state.claims / RETENTION;
+  for (let i = 0; i < TELEGRAMS.length; i++) {
+    if (state.telegramsSent.has(i)) continue;
+    if (pct >= TELEGRAMS[i].at) {
+      state.telegramsSent.add(i);
+      // Slight delay so they arrive just after the hit, not on the same frame
+      setTimeout(() => {
+        if (state.running) showTelegram(TELEGRAMS[i].body, TELEGRAMS[i]);
+      }, 400);
+      break; // Only one telegram per trigger check
+    }
+  }
+}
+
+function clearTelegrams() {
+  const stack = document.getElementById('telegramStack');
+  if (stack) stack.innerHTML = '';
+}
+
+/* ═══════════════════════════════════════════════════
+   World layout
+═══════════════════════════════════════════════════ */
+function layoutWorld() {
+  const count = Math.min(7, Math.max(5, Math.floor(W / 150)));
+  const margin = 60;
+  const usable = W - margin * 2;
+  const step = usable / (count - 1);
+  const groundY = H - 78;
+
+  // Rebuild buildings (preserve destroyed state if same index exists)
+  const old = state.buildings.slice();
+  state.buildings = [];
+  for (let i = 0; i < count; i++) {
+    const t = BUILDING_TYPES[i % BUILDING_TYPES.length];
+    const prior = old[i];
+    state.buildings.push({
+      id: i,
+      name: t.name,
+      value: t.value,
+      x: margin + step * i,
+      y: groundY,
+      w: t.w,
+      h: t.h,
+      destroyed: prior ? prior.destroyed : false,
+      roofStyle: i % 3,
+      windowSeed: (i * 13.37) % 1,
+    });
+  }
+
+  state.pumpY = H - 56;
+  state.pumpX = W / 2;
+  state.pumpTargetX = W / 2;
+
+  // Stars
+  state.stars = [];
+  const starCount = Math.floor((W * H) / 8000);
+  for (let i = 0; i < starCount; i++) {
+    state.stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H * 0.55,
+      s: Math.random() * 1.4 + 0.2,
+      tw: Math.random() * Math.PI * 2,
+    });
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   Fire
+═══════════════════════════════════════════════════ */
+class Fire {
+  constructor(building) {
+    this.building = building;
+    this.x = building.x + rand(-building.w * 0.15, building.w * 0.15);
+    this.y = building.y - building.h * rand(0.55, 0.9);
+    this.intensity = 1;
+    this.maxIntensity = 5;
+    this.hits = 0;
+    this.hitsNeeded = 1;
+    this.age = 0;
+    this.growthTimer = 0;
+    this.growthInterval = state.growthInterval + rand(-500, 500);
+    this.burnDownTimer = 0;
+    this.burnDownLimit = 4500;
+    this.radius = 14;
+    this.flicker = 0;
+    this.particles = [];
+    this.active = true;
+    this.burnedDown = false;
+    this.spawnedAt = performance.now();
+  }
+
+  hit(now) {
+    this.hits++;
+    this.flicker = 8;
+    if (this.hits >= this.hitsNeeded) {
+      this.intensity--;
+      this.hits = 0;
+      if (this.intensity <= 0) {
+        this.active = false;
+        return 'extinguished';
+      }
+      this.hitsNeeded = this.intensity;
+      this.radius = 12 + this.intensity * 5;
+      this.growthTimer = 0;
+    }
+    return 'hit';
+  }
+
+  update(dt) {
+    this.age += dt;
+    this.flicker *= 0.9;
+
+    this.growthTimer += dt;
+    if (this.growthTimer > this.growthInterval && this.intensity < this.maxIntensity) {
+      this.growthTimer = 0;
+      this.intensity++;
+      this.hits = 0;
+      this.hitsNeeded = this.intensity;
+      this.radius = 12 + this.intensity * 5;
+    }
+
+    if (this.intensity >= this.maxIntensity) {
+      this.burnDownTimer += dt;
+      if (this.burnDownTimer > this.burnDownLimit) {
+        this.active = false;
+        this.burnedDown = true;
+      }
+    }
+
+    // Particles
+    const spawn = 0.28 + this.intensity * 0.14;
+    if (Math.random() < spawn) {
+      const n = 1 + Math.floor(this.intensity / 2);
+      for (let i = 0; i < n; i++) {
+        this.particles.push({
+          x: this.x + rand(-this.radius * 0.6, this.radius * 0.6),
+          y: this.y + this.radius * 0.3,
+          vx: rand(-0.4, 0.4),
+          vy: -1 - Math.random() * 2 - this.intensity * 0.35,
+          life: 1,
+          size: 2 + Math.random() * 3,
+          c: Math.random() < 0.25 ? '#FFE27A'
+             : Math.random() < 0.55 ? '#F4823C'
+             : '#D63A2A',
+        });
+      }
+    }
+
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      const p = this.particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.018;
+      p.life -= dt * 0.0022;
+      p.size *= 0.993;
+      if (p.life <= 0) this.particles.splice(i, 1);
+    }
+  }
+
+  draw(ctx) {
+    // Heat glow
+    const glowR = this.radius * 2.6;
+    const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, glowR);
+    g.addColorStop(0, `rgba(244,130,60,${0.35 + this.intensity * 0.06})`);
+    g.addColorStop(0.4, `rgba(214,58,42,${0.18 + this.intensity * 0.04})`);
+    g.addColorStop(1, 'rgba(214,58,42,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, glowR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Particles
+    for (const p of this.particles) {
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.c;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Core flame
+    const flick = Math.sin(this.age * 0.018) * 2 + (this.flicker);
+    const r = this.radius + flick * 0.2;
+
+    // Outer
+    ctx.fillStyle = '#D63A2A';
+    ctx.beginPath();
+    ctx.ellipse(this.x, this.y + 2, r * 0.7, r, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Mid
+    ctx.fillStyle = '#F4823C';
+    ctx.beginPath();
+    ctx.ellipse(this.x, this.y, r * 0.55, r * 0.82, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Hot core
+    ctx.fillStyle = '#FFD54F';
+    ctx.beginPath();
+    ctx.ellipse(this.x, this.y + 2, r * 0.3, r * 0.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Intensity pips above
+    const pipY = this.y - this.radius - 16;
+    const pipW = 5, pipG = 2;
+    const totalW = this.maxIntensity * pipW + (this.maxIntensity - 1) * pipG;
+    const startX = this.x - totalW / 2;
+    for (let i = 0; i < this.maxIntensity; i++) {
+      const on = i < this.intensity;
+      ctx.fillStyle = on ? (this.intensity >= 5 ? '#FFD54F' : '#F4823C')
+                         : 'rgba(245,238,220,0.2)';
+      ctx.fillRect(startX + i * (pipW + pipG), pipY, pipW, 3);
+    }
+
+    // Burn-down warning ring at max
+    if (this.intensity >= this.maxIntensity) {
+      const ratio = this.burnDownTimer / this.burnDownLimit;
+      ctx.strokeStyle = `rgba(214,58,42,${0.6 + Math.sin(this.age*0.02)*0.3})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius + 8, -Math.PI/2, -Math.PI/2 + ratio * Math.PI * 2);
+      ctx.stroke();
+    }
+  }
+
+  claimValue() {
+    if (this.burnedDown) return this.building.value;
+    // Value scales with max intensity reached
+    const maxReached = Math.max(1, 5 - this.intensity + this.hits > 0 ? 5 - this.intensity : 5 - this.intensity);
+    // Simpler: base on current intensity at time of extinguishing
+    // Use the peak — track it instead
+    return this.peakValue();
+  }
+
+  peakValue() {
+    const peak = this._peak || this.intensity;
+    const table = { 1: 2000, 2: 8000, 3: 20000, 4: 38000, 5: 65000 };
+    return table[Math.min(5, Math.max(1, peak))];
+  }
+
+  updatePeak() {
+    this._peak = Math.max(this._peak || 0, this.intensity);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   Water stream
+═══════════════════════════════════════════════════ */
+class WaterStream {
+  constructor(fromX, fromY, toX, toY, onArrive) {
+    this.x0 = fromX; this.y0 = fromY;
+    this.x1 = toX;   this.y1 = toY;
+    this.t = 0;
+    this.duration = 420;
+    this.delivered = false;
+    this.done = false;
+    this.onArrive = onArrive;
+    this.droplets = [];
+    this.arcH = -90 - Math.abs(toX - fromX) * 0.18;
+  }
+
+  update(dt) {
+    this.t += dt;
+    const tt = Math.min(this.t / this.duration, 1);
+
+    // Emit droplets along the current path position
+    if (tt < 1) {
+      for (let i = 0; i < 4; i++) {
+        const f = tt + i * 0.015;
+        if (f < 0 || f > 1) continue;
+        const x = this.x0 + (this.x1 - this.x0) * f;
+        const y = this.y0 + (this.y1 - this.y0) * f + this.arcH * f * (1 - f) * 4;
+        this.droplets.push({
+          x, y,
+          vx: rand(-0.4, 0.4),
+          vy: rand(-0.2, 0.4),
+          life: 0.8,
+          size: 1.5 + Math.random() * 2.2,
+        });
+      }
+    }
+
+    if (!this.delivered && tt >= 1) {
+      this.delivered = true;
+      // Splash burst
+      for (let i = 0; i < 22; i++) {
+        const a = (i / 22) * Math.PI * 2;
+        this.droplets.push({
+          x: this.x1,
+          y: this.y1,
+          vx: Math.cos(a) * rand(1, 3),
+          vy: Math.sin(a) * rand(1, 2.5) - 1.5,
+          life: 1,
+          size: 2 + Math.random() * 2,
+        });
+      }
+      if (this.onArrive) this.onArrive();
+    }
+
+    for (let i = this.droplets.length - 1; i >= 0; i--) {
+      const d = this.droplets[i];
+      d.x += d.vx;
+      d.y += d.vy;
+      d.vy += 0.14;
+      d.life -= dt * 0.003;
+      if (d.life <= 0) this.droplets.splice(i, 1);
+    }
+
+    if (this.delivered && this.droplets.length === 0) this.done = true;
+  }
+
+  draw(ctx) {
+    for (const d of this.droplets) {
+      ctx.globalAlpha = Math.max(0, d.life);
+      ctx.fillStyle = '#5FA0C5';
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#BFE2F2';
+      ctx.beginPath();
+      ctx.arc(d.x - 0.5, d.y - 0.5, d.size * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   Smoke (after burn-down)
+═══════════════════════════════════════════════════ */
+class Smoke {
+  constructor(x, y) {
+    this.x = x; this.y = y;
+    this.age = 0;
+    this.duration = 5000;
+    this.particles = [];
+  }
+  update(dt) {
+    this.age += dt;
+    if (this.age < 3500 && Math.random() < 0.5) {
+      this.particles.push({
+        x: this.x + rand(-20, 20),
+        y: this.y,
+        vx: rand(-0.2, 0.2),
+        vy: rand(-0.6, -0.3),
+        life: 1,
+        size: 10 + Math.random() * 10,
+      });
+    }
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      const p = this.particles[i];
+      p.x += p.vx; p.y += p.vy;
+      p.vy -= 0.004;
+      p.size += 0.08;
+      p.life -= dt * 0.0006;
+      if (p.life <= 0) this.particles.splice(i, 1);
+    }
+    return this.age < this.duration || this.particles.length > 0;
+  }
+  draw(ctx) {
+    for (const p of this.particles) {
+      ctx.globalAlpha = p.life * 0.45;
+      ctx.fillStyle = '#2E2A24';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   Floating claim popup
+═══════════════════════════════════════════════════ */
+class Popup {
+  constructor(x, y, text, color) {
+    this.x = x; this.y = y;
+    this.text = text;
+    this.color = color || '#FFD54F';
+    this.life = 1;
+    this.vy = -0.7;
+  }
+  update(dt) {
+    this.y += this.vy;
+    this.vy *= 0.97;
+    this.life -= dt * 0.0009;
+    return this.life > 0;
+  }
+  draw(ctx) {
+    ctx.globalAlpha = Math.max(0, this.life);
+    ctx.font = "600 17px 'IM Fell English SC', serif";
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(15,18,32,0.7)';
+    ctx.fillText(this.text, this.x + 1, this.y + 1);
+    ctx.fillStyle = this.color;
+    ctx.fillText(this.text, this.x, this.y);
+    ctx.globalAlpha = 1;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   Meteor (asteroid falling from the sky)
+═══════════════════════════════════════════════════ */
+class Meteor {
+  constructor() {
+    // Choose a target near the buildings, then work back to a spawn point off-screen
+    const targetX = rand(W * 0.1, W * 0.9);
+    const targetY = H - 78 - rand(0, 40);
+    const angle = rand(-Math.PI * 0.68, -Math.PI * 0.32); // pointing "up" from target, for reversed travel
+    const dist = H * 1.1;
+
+    this.x = targetX + Math.cos(angle) * dist;
+    this.y = targetY + Math.sin(angle) * dist;
+    this.targetX = targetX;
+    this.targetY = targetY;
+
+    // Velocity toward target, ~4 seconds to fall
+    const fallDuration = 3800; // ms
+    const dx = targetX - this.x;
+    const dy = targetY - this.y;
+    this.vx = dx / fallDuration;
+    this.vy = dy / fallDuration;
+
+    this.size = 11 + Math.random() * 7;
+    this.rotation = Math.random() * Math.PI * 2;
+    this.rotSpeed = (Math.random() - 0.5) * 0.08;
+    this.active = true;
+    this.particles = [];
+
+    // Generate irregular rock silhouette
+    this.points = [];
+    const sides = 9 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < sides; i++) {
+      const a = (i / sides) * Math.PI * 2;
+      const r = this.size * (0.72 + Math.random() * 0.42);
+      this.points.push({ a, r });
+    }
+  }
+
+  update(dt) {
+    this.x += this.vx * dt;
+    this.y += this.vy * dt;
+    this.rotation += this.rotSpeed;
+
+    // Fiery trail — trailing behind direction of travel
+    const trailCount = 3;
+    for (let i = 0; i < trailCount; i++) {
+      this.particles.push({
+        x: this.x - this.vx * 8 + rand(-this.size * 0.6, this.size * 0.6),
+        y: this.y - this.vy * 8 + rand(-this.size * 0.3, this.size * 0.3),
+        vx: -this.vx * 0.3 + rand(-0.2, 0.2),
+        vy: -this.vy * 0.3 + rand(-0.3, 0.1),
+        life: 1,
+        size: 3 + Math.random() * 4,
+        c: Math.random() < 0.25 ? '#FFE27A'
+           : Math.random() < 0.55 ? '#F4823C'
+           : '#D63A2A',
+      });
+    }
+    // Some smoke too
+    if (Math.random() < 0.35) {
+      this.particles.push({
+        x: this.x - this.vx * 14 + rand(-5, 5),
+        y: this.y - this.vy * 14 + rand(-3, 3),
+        vx: rand(-0.2, 0.2),
+        vy: rand(-0.3, 0.1),
+        life: 1.4,
+        size: 5 + Math.random() * 5,
+        c: '#3A3530',
+        smoke: true,
+      });
+    }
+
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      const p = this.particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.015;
+      p.life -= dt * 0.002;
+      if (p.smoke) p.size += 0.08;
+      if (p.life <= 0) this.particles.splice(i, 1);
+    }
+
+    // Did it land?
+    if (this.y >= H - 78) {
+      this.active = false;
+      this.landed = true;
+    }
+  }
+
+  // Returns {hitBuilding, building} or null
+  resolveImpact() {
+    for (const b of state.buildings) {
+      if (!b.destroyed && Math.abs(this.x - b.x) < b.w / 2 + 10) {
+        return { hitBuilding: true, building: b };
+      }
+    }
+    return { hitBuilding: false, building: null };
+  }
+
+  draw(ctx) {
+    // Trail particles
+    for (const p of this.particles) {
+      ctx.globalAlpha = Math.max(0, p.life * (p.smoke ? 0.4 : 1));
+      ctx.fillStyle = p.c;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Outer heat glow
+    const glowR = this.size * 2.4;
+    const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, glowR);
+    g.addColorStop(0, 'rgba(255,213,79,0.5)');
+    g.addColorStop(0.4, 'rgba(244,130,60,0.25)');
+    g.addColorStop(1, 'rgba(214,58,42,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, glowR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Rock body
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotation);
+
+    ctx.fillStyle = '#2E2118';
+    ctx.strokeStyle = '#0A0704';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let i = 0; i < this.points.length; i++) {
+      const p = this.points[i];
+      const px = Math.cos(p.a) * p.r;
+      const py = Math.sin(p.a) * p.r;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Hot molten cracks
+    ctx.strokeStyle = '#F4823C';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(-this.size * 0.5, -this.size * 0.2);
+    ctx.lineTo(-this.size * 0.1, this.size * 0.1);
+    ctx.lineTo(this.size * 0.4, -this.size * 0.3);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-this.size * 0.2, this.size * 0.5);
+    ctx.lineTo(this.size * 0.2, this.size * 0.2);
+    ctx.stroke();
+
+    // Leading-edge molten glow
+    ctx.fillStyle = 'rgba(255,213,79,0.85)';
+    ctx.beginPath();
+    ctx.arc(this.size * 0.35, this.size * 0.25, this.size * 0.22, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+
+    // Target reticle on the ground so the player can anticipate impact
+    const pulseA = 0.45 + 0.35 * Math.sin(performance.now() * 0.008);
+    ctx.strokeStyle = `rgba(214,58,42,${pulseA})`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(this.targetX, this.targetY, 10, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(this.targetX - 14, this.targetY);
+    ctx.lineTo(this.targetX - 6, this.targetY);
+    ctx.moveTo(this.targetX + 6, this.targetY);
+    ctx.lineTo(this.targetX + 14, this.targetY);
+    ctx.moveTo(this.targetX, this.targetY - 14);
+    ctx.lineTo(this.targetX, this.targetY - 6);
+    ctx.moveTo(this.targetX, this.targetY + 6);
+    ctx.lineTo(this.targetX, this.targetY + 14);
+    ctx.stroke();
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   Impact flash — burst at point of destruction
+═══════════════════════════════════════════════════ */
+class ImpactFlash {
+  constructor(x, y, color) {
+    this.x = x; this.y = y;
+    this.age = 0;
+    this.duration = 500;
+    this.color = color || '#FFD54F';
+    this.particles = [];
+    for (let i = 0; i < 20; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const sp = rand(1.5, 4);
+      this.particles.push({
+        x: x, y: y,
+        vx: Math.cos(a) * sp,
+        vy: Math.sin(a) * sp - 1,
+        life: 1,
+        size: 2 + Math.random() * 3,
+      });
+    }
+  }
+  update(dt) {
+    this.age += dt;
+    for (const p of this.particles) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.15;
+      p.life -= dt * 0.003;
+    }
+    return this.age < this.duration;
+  }
+  draw(ctx) {
+    // Central flash
+    const t = this.age / this.duration;
+    const r = 24 * (1 - t) + 16;
+    const a = (1 - t) * 0.9;
+    const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, r);
+    g.addColorStop(0, `rgba(255,255,230,${a})`);
+    g.addColorStop(0.5, `rgba(255,213,79,${a * 0.7})`);
+    g.addColorStop(1, 'rgba(244,130,60,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Debris
+    for (const p of this.particles) {
+      if (p.life <= 0) continue;
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   Scene drawing
+═══════════════════════════════════════════════════ */
+function drawSky(ctx) {
+  // Twinkling stars
+  for (const s of state.stars) {
+    s.tw += 0.02;
+    const a = 0.35 + 0.4 * (0.5 + 0.5 * Math.sin(s.tw));
+    ctx.globalAlpha = a;
+    ctx.fillStyle = s.s > 1 ? '#FFF3C7' : '#E3E8FF';
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.s, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Moon
+  const moonX = W - 64, moonY = 54;
+  ctx.fillStyle = 'rgba(245,238,220,0.85)';
+  ctx.beginPath();
+  ctx.arc(moonX, moonY, 18, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(15,18,32,0.85)';
+  ctx.beginPath();
+  ctx.arc(moonX + 6, moonY - 3, 16, 0, Math.PI * 2);
+  ctx.fill();
+  // Moon glow
+  const mg = ctx.createRadialGradient(moonX, moonY, 10, moonX, moonY, 60);
+  mg.addColorStop(0, 'rgba(245,238,220,0.18)');
+  mg.addColorStop(1, 'rgba(245,238,220,0)');
+  ctx.fillStyle = mg;
+  ctx.beginPath();
+  ctx.arc(moonX, moonY, 60, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawGround(ctx) {
+  const groundY = H - 48;
+
+  // Distant hills
+  ctx.fillStyle = '#1A1814';
+  ctx.beginPath();
+  ctx.moveTo(0, groundY - 10);
+  for (let x = 0; x <= W; x += 40) {
+    const y = groundY - 10 - Math.sin(x * 0.01) * 12 - Math.cos(x * 0.023) * 6;
+    ctx.lineTo(x, y);
+  }
+  ctx.lineTo(W, H); ctx.lineTo(0, H);
+  ctx.closePath();
+  ctx.fill();
+
+  // Ground
+  const gg = ctx.createLinearGradient(0, groundY, 0, H);
+  gg.addColorStop(0, '#2A2218');
+  gg.addColorStop(1, '#0E0A06');
+  ctx.fillStyle = gg;
+  ctx.fillRect(0, groundY, W, H - groundY);
+
+  // Ground highlight
+  ctx.strokeStyle = 'rgba(212,168,74,0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, groundY + 0.5);
+  ctx.lineTo(W, groundY + 0.5);
+  ctx.stroke();
+}
+
+function drawBuilding(ctx, b) {
+  const x = b.x, baseY = b.y;
+  const w = b.w, h = b.h;
+
+  if (b.destroyed) {
+    // Ruined foundation
+    ctx.fillStyle = '#1A140D';
+    ctx.fillRect(x - w/2, baseY - 10, w, 10);
+    // Charred wood stumps
+    ctx.strokeStyle = '#0A0805';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < 4; i++) {
+      const sx = x - w/2 + 8 + i * (w - 16) / 3;
+      const sh = 4 + (i * 7 % 8);
+      ctx.beginPath();
+      ctx.moveTo(sx, baseY - 10);
+      ctx.lineTo(sx + rand(-2, 2), baseY - 10 - sh);
+      ctx.stroke();
+    }
+    // "Condemned" sign
+    ctx.fillStyle = 'rgba(122,31,40,0.9)';
+    ctx.fillRect(x - 18, baseY - 28, 36, 12);
+    ctx.strokeStyle = '#1F1C15';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x - 18, baseY - 28, 36, 12);
+    ctx.font = "italic 9px 'IM Fell English', serif";
+    ctx.fillStyle = '#F1E7CD';
+    ctx.textAlign = 'center';
+    ctx.fillText('LOSS', x, baseY - 19);
+    return;
+  }
+
+  // Silhouette with warm glow from windows
+  ctx.fillStyle = '#16120B';
+  ctx.beginPath();
+  ctx.moveTo(x - w/2, baseY);
+  ctx.lineTo(x - w/2, baseY - h * 0.7);
+
+  // Roof styles
+  if (b.roofStyle === 0) {
+    // Gabled roof
+    ctx.lineTo(x, baseY - h);
+    ctx.lineTo(x + w/2, baseY - h * 0.7);
+  } else if (b.roofStyle === 1) {
+    // Flat with chimney profile (stepped)
+    ctx.lineTo(x - w/2, baseY - h * 0.95);
+    ctx.lineTo(x - w/4, baseY - h * 0.95);
+    ctx.lineTo(x - w/4, baseY - h);
+    ctx.lineTo(x + w/4, baseY - h);
+    ctx.lineTo(x + w/4, baseY - h * 0.95);
+    ctx.lineTo(x + w/2, baseY - h * 0.95);
+    ctx.lineTo(x + w/2, baseY - h * 0.7);
+  } else {
+    // Mansard / steep roof with steeple
+    ctx.lineTo(x - w/3, baseY - h * 0.8);
+    ctx.lineTo(x - 6, baseY - h * 0.95);
+    ctx.lineTo(x - 4, baseY - h);
+    ctx.lineTo(x + 4, baseY - h);
+    ctx.lineTo(x + 6, baseY - h * 0.95);
+    ctx.lineTo(x + w/3, baseY - h * 0.8);
+    ctx.lineTo(x + w/2, baseY - h * 0.7);
+  }
+  ctx.lineTo(x + w/2, baseY);
+  ctx.closePath();
+  ctx.fill();
+
+  // Trim / outline
+  ctx.strokeStyle = '#2A2218';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Windows (warm glow)
+  ctx.fillStyle = 'rgba(244,170,60,0.55)';
+  const winY = baseY - h * 0.5;
+  const winCount = w > 95 ? 3 : 2;
+  const winW = 8, winH = 10;
+  for (let i = 0; i < winCount; i++) {
+    const wx = x - w/3 + (i * (w * 0.66) / (winCount - 1 || 1));
+    if (winCount === 1) {
+      ctx.fillRect(x - winW/2, winY, winW, winH);
+    } else {
+      ctx.fillRect(wx - winW/2, winY, winW, winH);
+    }
+  }
+  // Window cross
+  ctx.strokeStyle = '#16120B';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < winCount; i++) {
+    const wx = x - w/3 + (i * (w * 0.66) / (winCount - 1 || 1));
+    ctx.beginPath();
+    ctx.moveTo(wx, winY); ctx.lineTo(wx, winY + winH);
+    ctx.moveTo(wx - winW/2, winY + winH/2); ctx.lineTo(wx + winW/2, winY + winH/2);
+    ctx.stroke();
+  }
+
+  // Door
+  ctx.fillStyle = '#0E0A06';
+  const dW = 10, dH = 18;
+  ctx.fillRect(x - dW/2, baseY - dH, dW, dH);
+  ctx.fillStyle = '#D4A84A';
+  ctx.fillRect(x + 2, baseY - dH/2, 1.5, 1.5);
+
+  // Nameplate
+  ctx.font = "italic 10px 'IM Fell English', serif";
+  ctx.fillStyle = 'rgba(212,168,74,0.6)';
+  ctx.textAlign = 'center';
+  ctx.fillText(b.name, x, baseY + 14);
+}
+
+function drawFirePump(ctx, x, y, bob, recoil) {
+  ctx.save();
+  ctx.translate(x, y + Math.sin(bob) * 0.6);
+
+  const gold = '#D4A84A';
+
+  // Ground shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.38)';
+  ctx.beginPath();
+  ctx.ellipse(0, 30, 78, 5, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // ═══ WAGON BED ═══
+  // Top horizontal flange — wide rectangular plank
+  ctx.fillStyle = gold;
+  ctx.fillRect(-72, -8, 144, 5);
+
+  // Bed body — slight trapezoid below the flange, with two support posts
+  // rather than a solid block (matches the open-space look in the logo)
+  ctx.beginPath();
+  ctx.moveTo(-70, -3);
+  ctx.lineTo(70, -3);
+  ctx.lineTo(66, 8);
+  // Right support post down
+  ctx.lineTo(44, 8);
+  ctx.lineTo(44, 4);
+  // Across the underside gap (up and over)
+  ctx.lineTo(-44, 4);
+  ctx.lineTo(-44, 8);
+  // Left support post
+  ctx.lineTo(-66, 8);
+  ctx.closePath();
+  ctx.fill();
+
+  // ═══ WHEELS ═══
+  const wheelPositions = [-44, 44];
+  for (const wx of wheelPositions) {
+    // Outer rim (thick)
+    ctx.strokeStyle = gold;
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.arc(wx, 22, 25, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Inner rim (thin)
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(wx, 22, 17, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // 8 spokes from hub to inner rim
+    ctx.lineWidth = 2.8;
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(wx + Math.cos(a) * 4, 22 + Math.sin(a) * 4);
+      ctx.lineTo(wx + Math.cos(a) * 17, 22 + Math.sin(a) * 17);
+      ctx.stroke();
+    }
+
+    // Hub
+    ctx.fillStyle = gold;
+    ctx.beginPath();
+    ctx.arc(wx, 22, 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // ═══ BOILER / PUMP VESSEL ═══
+  ctx.save();
+  ctx.translate(0, -recoil * 1.5);
+  ctx.fillStyle = gold;
+
+  // Wide base plinth (widest point of boiler, sits on wagon flange)
+  ctx.fillRect(-28, -14, 56, 5);
+
+  // Main body — urn with pinched-waist concave sides (the distinctive
+  // hourglass shape in the logo: wide at bottom AND top, narrow in middle)
+  ctx.beginPath();
+  // Start bottom-left of body
+  ctx.moveTo(-26, -14);
+  // Left side: concave curve inward (hourglass pinch)
+  ctx.bezierCurveTo(
+    -20, -22,   // pulls inward toward the waist
+    -20, -30,   // continues the waist pinch
+    -24, -38    // widens back out approaching top
+  );
+  // Top-left corner
+  ctx.lineTo(-24, -40);
+  ctx.lineTo(24, -40);
+  // Top-right corner
+  ctx.lineTo(24, -38);
+  // Right side: mirror of left
+  ctx.bezierCurveTo(
+    20, -30,
+    20, -22,
+    26, -14
+  );
+  ctx.closePath();
+  ctx.fill();
+
+  // Upper rim band of main body (the shoulder)
+  ctx.fillRect(-24, -42, 48, 3);
+
+  // Neck / chimney — narrower rectangular section
+  ctx.fillRect(-11, -52, 22, 10);
+
+  // Flared top cap — wider than neck with angled sides
+  ctx.beginPath();
+  ctx.moveTo(-16, -52);
+  ctx.lineTo(16, -52);
+  ctx.lineTo(14, -58);
+  ctx.lineTo(-14, -58);
+  ctx.closePath();
+  ctx.fill();
+
+  // Top finial — small flat cap on the very top
+  ctx.fillRect(-15, -61, 30, 3);
+
+  // ═══ DECORATIVE HORNS ═══
+  // Each horn: small inward curl at the top-shoulder of the boiler,
+  // then a sweeping S-curve up over a peak and down to the outer side.
+  // Only the INNER end has the spiral curl; the outer end tapers off.
+  ctx.strokeStyle = gold;
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  // --- LEFT HORN ---
+  // Small curl at inner end (near top-left shoulder of boiler)
+  ctx.beginPath();
+  ctx.arc(-22, -47, 4, Math.PI * 1.1, Math.PI * 2.8, false);
+  ctx.stroke();
+
+  // Main sweeping arc: up from curl, peaks above boiler, descends to outside
+  ctx.beginPath();
+  ctx.moveTo(-22, -51);
+  ctx.bezierCurveTo(
+    -30, -62,   // rising up-left
+    -48, -62,   // peak of the arch (above boiler top)
+    -58, -44    // coming down toward outer side
+  );
+  ctx.bezierCurveTo(
+    -64, -32,
+    -70, -20,
+    -72, -10    // tail ends above the wheel
+  );
+  ctx.stroke();
+
+  // --- RIGHT HORN (mirror) ---
+  ctx.beginPath();
+  ctx.arc(22, -47, 4, Math.PI * 0.2, Math.PI * 1.9, true);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(22, -51);
+  ctx.bezierCurveTo(
+    30, -62,
+    48, -62,
+    58, -44
+  );
+  ctx.bezierCurveTo(
+    64, -32,
+    70, -20,
+    72, -10
+  );
+  ctx.stroke();
+
+  ctx.restore();
+  ctx.restore();
+}
+
+/* ═══════════════════════════════════════════════════
+   Game loop
+═══════════════════════════════════════════════════ */
+function startGame() {
+  state.started = true;
+  state.running = true;
+  state.ended = false;
+  state.wave = 0;
+  state.waveTimer = 0;
+  state.claims = 0;
+  state.firesExtinguished = 0;
+  state.propertiesLost = 0;
+  state.meteorsShotDown = 0;
+  state.meteorsLanded = 0;
+  state.totalSprays = 0;
+  state.fires = [];
+  state.meteors = [];
+  state.streams = [];
+  state.smokes = [];
+  state.popups = [];
+  state.flashes = [];
+  state.telegramsSent = new Set();
+  clearTelegrams();
+  state.spawnTimer = 0;
+  state.meteorTimer = 0;
+  state.meteorInterval = 9000;
+  state.spawnInterval = 4500;
+  state.growthInterval = 3600;
+  state.lastTime = 0;
+
+  layoutWorld();
+  advanceWave();
+  updateHUD();
+
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('endScreen').classList.add('hidden');
+
+  requestAnimationFrame(tick);
+}
+
+function advanceWave() {
+  state.wave++;
+  state.waveTimer = 0;
+
+  if (state.wave > VICTORY_WAVE) {
+    endGame(true);
+    return;
+  }
+
+  // Difficulty curve
+  state.spawnInterval = Math.max(1400, 4500 - (state.wave - 1) * 380);
+  state.growthInterval = Math.max(1700, 3600 - (state.wave - 1) * 240);
+  // Meteors start appearing at Wave III; rate increases after
+  state.meteorInterval = state.wave < 3 ? 999999
+                       : Math.max(3500, 12000 - (state.wave - 3) * 1400);
+
+  const titles = ['', 'First Alarm', 'Second Alarm', 'Third Alarm',
+                  'Fourth Alarm', 'Fifth Alarm', 'Sixth Alarm',
+                  'Seventh Alarm', 'Final Alarm — Hold the Line'];
+  banner(toRoman(state.wave), titles[state.wave] || 'The Reckoning');
+
+  if (state.wave === 3) {
+    setTimeout(() => flash('Meteors sighted over Cohansey River — beware the skies!', 'bad'), 900);
+  }
+
+  document.getElementById('waveDisplay').textContent = toRoman(state.wave) + ' / ' + toRoman(VICTORY_WAVE);
+}
+
+function spawnFire() {
+  const candidates = state.buildings.filter(b => !b.destroyed && !state.fires.some(f => f.building.id === b.id));
+  if (candidates.length === 0) return;
+  const b = candidates[Math.floor(Math.random() * candidates.length)];
+  const f = new Fire(b);
+
+  // Later waves may start at higher intensity
+  if (state.wave >= 4 && Math.random() < 0.18) { f.intensity = 2; f.hitsNeeded = 2; f.radius = 22; }
+  if (state.wave >= 6 && Math.random() < 0.12) { f.intensity = 3; f.hitsNeeded = 3; f.radius = 27; }
+
+  state.fires.push(f);
+}
+
+function endGame(victory) {
+  state.running = false;
+  state.ended = true;
+
+  // Final dramatic telegram from Guy Carpenter — clear the stack first
+  // so this one gets its moment in the spotlight
+  clearTelegrams();
+  if (victory) {
+    showTelegram(
+      "DAWN HAS BROKEN STOP LEDGER HELD BELOW RETENTION STOP " +
+      "SWISS RE SENDS THEIR REGARDS AND A FRUIT BASKET STOP " +
+      "TREATY RENEWS AT NORMAL TERMS STOP CONGRATULATIONS STOP"
+    );
+  } else {
+    showTelegram(
+      "TREATY TRIGGERED AT 750K STOP DRAFTING LOSS NOTICE NOW STOP " +
+      "REINSURERS ASKING WHAT EXACTLY HAPPENED IN BRIDGETON STOP " +
+      "I AM TELLING THEM IT WAS METEORS STOP THEY ARE NOT LAUGHING STOP " +
+      "SEE YOU AT JUNE RENEWALS STOP GODSPEED STOP",
+      { urgent: true }
+    );
+  }
+
+  const title = victory ? 'Company Preserved' : 'Retention Breached';
+  const subtitle = victory ? 'The dawn bells ring — ledger holds' : 'Reinsurance has been triggered';
+  const msg = victory
+    ? `Dawn broke before the retention did. The Brigade extinguished ${state.firesExtinguished} fires and held the ledger at ${fmt(state.claims)} — well within the $750,000 attachment. The reinsurers remain untroubled.`
+    : `Losses have exceeded the $750,000 attachment. The treaty reinsurers must now bear the excess, and the underwriters shall have a difficult conversation in the morning.`;
+
+  document.getElementById('endTitle').textContent = title;
+  document.getElementById('endSubtitle').textContent = subtitle;
+  document.getElementById('endMessage').textContent = msg;
+
+  const ledger = document.getElementById('finalLedger');
+  const accuracy = state.totalSprays > 0
+    ? Math.round((state.firesExtinguished / Math.max(1, state.firesExtinguished + state.propertiesLost)) * 100)
+    : 0;
+  const meteorRows = (state.meteorsShotDown + state.meteorsLanded) > 0
+    ? `<div><span>Meteors Intercepted</span><span>${state.meteorsShotDown} of ${state.meteorsShotDown + state.meteorsLanded}</span></div>`
+    : '';
+  ledger.innerHTML = `
+    <div><span>Alarms Endured</span><span>${toRoman(Math.min(state.wave, VICTORY_WAVE))} of ${toRoman(VICTORY_WAVE)}</span></div>
+    <div><span>Fires Extinguished</span><span>${state.firesExtinguished}</span></div>
+    <div><span>Properties Lost</span><span>${state.propertiesLost}</span></div>
+    ${meteorRows}
+    <div><span>Save Rate</span><span>${accuracy}%</span></div>
+    <div><span>Total Claims Paid</span><span>${fmt(state.claims)}</span></div>
+  `;
+
+  // Give the player a beat to read the final telegram before the card appears
+  setTimeout(() => {
+    document.getElementById('endScreen').classList.remove('hidden');
+  }, 3200);
+}
+
+function tick(now) {
+  if (!state.running) return;
+  const dt = state.lastTime ? Math.min(now - state.lastTime, 50) : 16;
+  state.lastTime = now;
+
+  update(dt);
+  render();
+
+  requestAnimationFrame(tick);
+}
+
+function update(dt) {
+  state.pumpBob += dt * 0.003;
+  state.pumpRecoil = Math.max(0, state.pumpRecoil - dt * 0.006);
+
+  // Pump glides to target
+  state.pumpX += (state.pumpTargetX - state.pumpX) * 0.12;
+
+  // Wave timing
+  state.waveTimer += dt;
+  state.spawnTimer += dt;
+  state.meteorTimer += dt;
+
+  if (state.spawnTimer >= state.spawnInterval) {
+    state.spawnTimer = 0;
+    spawnFire();
+    // Occasional double spawn in later waves
+    if (state.wave >= 5 && Math.random() < 0.2) spawnFire();
+  }
+
+  // Meteor spawning (starts wave 3)
+  if (state.meteorTimer >= state.meteorInterval) {
+    state.meteorTimer = 0;
+    state.meteors.push(new Meteor());
+    // Double meteor shower at wave 6+
+    if (state.wave >= 6 && Math.random() < 0.25) {
+      setTimeout(() => {
+        if (state.running) state.meteors.push(new Meteor());
+      }, 800);
+    }
+  }
+
+  if (state.waveTimer >= WAVE_DURATION && state.fires.length === 0 && state.meteors.length === 0) {
+    advanceWave();
+  } else if (state.waveTimer >= WAVE_DURATION + 6000) {
+    // Safety: force advance if fires linger too long
+    advanceWave();
+  }
+
+  // Update meteors
+  for (let i = state.meteors.length - 1; i >= 0; i--) {
+    const m = state.meteors[i];
+    m.update(dt);
+    if (!m.active) {
+      if (m.landed) {
+        state.meteorsLanded++;
+        const impact = m.resolveImpact();
+        state.flashes.push(new ImpactFlash(m.x, m.y, '#F4823C'));
+
+        if (impact.hitBuilding) {
+          const b = impact.building;
+          // Immediate debris claim
+          const debris = 25000;
+          state.claims += debris;
+          state.popups.push(new Popup(b.x, b.y - b.h - 10, '−' + fmt(debris), '#FF8577'));
+          flash(`Meteor strike · ${b.name} · ${fmt(debris)} debris`, 'bad');
+          shakeMeter();
+
+          // And ignite a Grade IV fire on the building if one isn't already there
+          const existing = state.fires.find(f => f.building.id === b.id);
+          if (!existing) {
+            const f = new Fire(b);
+            f.intensity = 4;
+            f.hitsNeeded = 4;
+            f.radius = 32;
+            state.fires.push(f);
+          } else {
+            existing.intensity = Math.min(5, existing.intensity + 2);
+            existing.radius = 12 + existing.intensity * 5;
+          }
+        } else {
+          // Crater in the street — small debris claim
+          const debris = 4000;
+          state.claims += debris;
+          state.popups.push(new Popup(m.x, m.y - 10, '−' + fmt(debris), '#F4823C'));
+          flash(`Meteor crater · street debris · ${fmt(debris)}`, '');
+        }
+
+        updateHUD();
+        if (state.claims >= RETENTION) { endGame(false); return; }
+      }
+      state.meteors.splice(i, 1);
+    }
+  }
+
+  // Update fires
+  for (let i = state.fires.length - 1; i >= 0; i--) {
+    const f = state.fires[i];
+    f.update(dt);
+    f.updatePeak();
+    if (!f.active) {
+      if (f.burnedDown) {
+        const claim = f.building.value;
+        state.claims += claim;
+        state.propertiesLost++;
+        f.building.destroyed = true;
+        state.smokes.push(new Smoke(f.building.x, f.building.y - f.building.h * 0.4));
+        state.popups.push(new Popup(f.building.x, f.building.y - f.building.h - 10, '−' + fmt(claim), '#FF8577'));
+        flash(`Total loss · ${f.building.name} · ${fmt(claim)}`, 'bad');
+        shakeMeter();
+      } else {
+        const claim = f.peakValue();
+        state.claims += claim;
+        state.firesExtinguished++;
+        state.popups.push(new Popup(f.x, f.y - 10, '−' + fmt(claim), '#FFD54F'));
+        if (claim >= 30000) flash(`Severe damage · ${f.building.name} · ${fmt(claim)}`, 'bad');
+        else if (claim >= 15000) flash(`Fire contained · ${f.building.name} · ${fmt(claim)}`, '');
+        else flash(`Smoke damage · ${f.building.name} · ${fmt(claim)}`, 'good');
+      }
+      state.fires.splice(i, 1);
+      updateHUD();
+
+      if (state.claims >= RETENTION) {
+        endGame(false);
+        return;
+      }
+    }
+  }
+
+  // Update streams
+  for (let i = state.streams.length - 1; i >= 0; i--) {
+    state.streams[i].update(dt);
+    if (state.streams[i].done) state.streams.splice(i, 1);
+  }
+
+  // Update smokes
+  for (let i = state.smokes.length - 1; i >= 0; i--) {
+    const alive = state.smokes[i].update(dt);
+    if (!alive) state.smokes.splice(i, 1);
+  }
+
+  // Update popups
+  for (let i = state.popups.length - 1; i >= 0; i--) {
+    const alive = state.popups[i].update(dt);
+    if (!alive) state.popups.splice(i, 1);
+  }
+
+  // Update impact flashes
+  for (let i = state.flashes.length - 1; i >= 0; i--) {
+    const alive = state.flashes[i].update(dt);
+    if (!alive) state.flashes.splice(i, 1);
+  }
+
+  // Out of buildings?
+  if (state.buildings.every(b => b.destroyed)) {
+    endGame(false);
+  }
+}
+
+function render() {
+  ctx.clearRect(0, 0, W, H);
+
+  drawSky(ctx);
+  drawGround(ctx);
+
+  // Buildings (back to front by y, though all same)
+  for (const b of state.buildings) drawBuilding(ctx, b);
+
+  // Smokes (behind fires)
+  for (const s of state.smokes) s.draw(ctx);
+
+  // Fires
+  for (const f of state.fires) f.draw(ctx);
+
+  // Meteors (falling from sky, drawn above fires but below pump)
+  for (const m of state.meteors) m.draw(ctx);
+
+  // Pump
+  drawFirePump(ctx, state.pumpX, state.pumpY, state.pumpBob, state.pumpRecoil);
+
+  // Streams (water arcs — on top of pump and meteors)
+  for (const s of state.streams) s.draw(ctx);
+
+  // Impact flashes
+  for (const f of state.flashes) f.draw(ctx);
+
+  // Popups
+  for (const p of state.popups) p.draw(ctx);
+
+  // Vignette overlay on arena
+  const grd = ctx.createRadialGradient(W/2, H/2, Math.min(W, H) * 0.4, W/2, H/2, Math.max(W, H) * 0.7);
+  grd.addColorStop(0, 'rgba(0,0,0,0)');
+  grd.addColorStop(1, 'rgba(0,0,0,0.45)');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+}
+
+function updateHUD() {
+  document.getElementById('claimsPaid').textContent = fmt(state.claims);
+  const pct = Math.min(100, (state.claims / RETENTION) * 100);
+  document.getElementById('retentionFill').style.width = pct + '%';
+  const claimsEl = document.getElementById('claimsPaid');
+  claimsEl.classList.toggle('danger', pct >= 75);
+  checkTelegrams();
+}
+
+function shakeMeter() {
+  const m = document.getElementById('retentionMeter');
+  m.classList.remove('shake');
+  void m.offsetWidth;
+  m.classList.add('shake');
+}
+
+/* ═══════════════════════════════════════════════════
+   Input
+═══════════════════════════════════════════════════ */
+function getCanvasPoint(e) {
+  const rect = canvas.getBoundingClientRect();
+  const cx = (e.clientX ?? (e.touches && e.touches[0].clientX)) - rect.left;
+  const cy = (e.clientY ?? (e.touches && e.touches[0].clientY)) - rect.top;
+  return { x: cx, y: cy };
+}
+
+function handleClick(e) {
+  if (!state.running) return;
+  e.preventDefault();
+  const p = getCanvasPoint(e);
+
+  // Priority 1: Meteors (most urgent — incoming from sky)
+  let hitMeteor = null;
+  let bestMeteorD = Infinity;
+  for (const m of state.meteors) {
+    if (!m.active) continue;
+    const dx = m.x - p.x, dy = m.y - p.y;
+    const d2 = dx * dx + dy * dy;
+    const r = m.size + 24; // generous hitbox — they're fast-moving
+    if (d2 < r * r && d2 < bestMeteorD) { bestMeteorD = d2; hitMeteor = m; }
+  }
+
+  // Priority 2: Fires (if no meteor was clicked)
+  let hitFire = null;
+  if (!hitMeteor) {
+    let bestFireD = Infinity;
+    for (const f of state.fires) {
+      const dx = f.x - p.x, dy = f.y - p.y;
+      const d2 = dx * dx + dy * dy;
+      const r = f.radius + 20;
+      if (d2 < r * r && d2 < bestFireD) { bestFireD = d2; hitFire = f; }
+    }
+  }
+
+  // Move pump toward click X (anchor at meteor/fire if one was hit)
+  const anchorX = hitMeteor ? hitMeteor.x : (hitFire ? hitFire.x : p.x);
+  state.pumpTargetX = clamp(anchorX, 80, W - 80);
+  state.pumpRecoil = 1;
+  state.totalSprays++;
+
+  // Spout exit position (approximate top of the boiler cap)
+  const from = { x: state.pumpX, y: state.pumpY - 62 };
+
+  if (hitMeteor) {
+    // Lead the target: aim where it will be when water arrives
+    const leadMs = 350;
+    const leadX = hitMeteor.x + hitMeteor.vx * leadMs;
+    const leadY = hitMeteor.y + hitMeteor.vy * leadMs;
+    const target = hitMeteor;
+    const stream = new WaterStream(from.x, from.y, leadX, leadY, () => {
+      if (!target.active) return;
+      target.active = false;
+      target.intercepted = true;
+      state.meteorsShotDown++;
+      state.flashes.push(new ImpactFlash(target.x, target.y, '#9FD1E8'));
+      state.popups.push(new Popup(target.x, target.y, 'INTERCEPTED', '#BFE2F2'));
+      flash('Meteor intercepted — disaster averted', 'good');
+    });
+    state.streams.push(stream);
+  } else if (hitFire) {
+    const target = hitFire;
+    const stream = new WaterStream(from.x, from.y, target.x, target.y, () => {
+      if (!target.active) return;
+      target.hit(performance.now());
+    });
+    state.streams.push(stream);
+  } else {
+    // Dry spray — land at click point
+    const dry = new WaterStream(from.x, from.y, p.x, p.y);
+    state.streams.push(dry);
+  }
+}
+
+canvas.addEventListener('mousedown', handleClick);
+canvas.addEventListener('touchstart', handleClick, { passive: false });
+
+/* ═══════════════════════════════════════════════════
+   Start
+═══════════════════════════════════════════════════ */
+document.getElementById('startBtn').addEventListener('click', () => {
+  resizeCanvas();
+  startGame();
+});
+document.getElementById('restartBtn').addEventListener('click', () => {
+  resizeCanvas();
+  startGame();
+});
+
+// Initial canvas size
+resizeCanvas();
+
+// Idle attract scene — draw a static pump + buildings behind the start screen
+layoutWorld();
+drawSky(ctx);
+drawGround(ctx);
+for (const b of state.buildings) drawBuilding(ctx, b);
+drawFirePump(ctx, W / 2, H - 56, 0, 0);
+</script>
+</body>
+</html>
