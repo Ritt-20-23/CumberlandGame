@@ -835,9 +835,33 @@ footer {
             <div class="mode-desc">A Cat. III tempest steams toward the boardwalk. Board, sandbag, and evacuate the Music Pier, Flanders Hotel, and Wonderland Pier before landfall.</div>
             <div class="mode-tagline">Prep · Debris · Storm Surge</div>
           </button>
+
+          <button class="mode-card" data-mode="bugs" style="grid-column: 1 / -1;">
+            <svg class="mode-icon" viewBox="0 0 40 40" fill="none">
+              <!-- Bug body -->
+              <ellipse cx="20" cy="22" rx="8" ry="10" fill="#3A5A3E" stroke="#1F2D1F" stroke-width="1"/>
+              <!-- Stripe down center -->
+              <line x1="20" y1="13" x2="20" y2="31" stroke="#1F2D1F" stroke-width="1"/>
+              <!-- Antennae -->
+              <path d="M 16 13 Q 13 8 11 6" stroke="#1F2D1F" stroke-width="1.2" fill="none"/>
+              <path d="M 24 13 Q 27 8 29 6" stroke="#1F2D1F" stroke-width="1.2" fill="none"/>
+              <circle cx="11" cy="6" r="1.2" fill="#1F2D1F"/>
+              <circle cx="29" cy="6" r="1.2" fill="#1F2D1F"/>
+              <!-- Legs -->
+              <path d="M 12 20 L 7 18 M 12 22 L 6 23 M 12 25 L 7 28" stroke="#1F2D1F" stroke-width="1.2"/>
+              <path d="M 28 20 L 33 18 M 28 22 L 34 23 M 28 25 L 33 28" stroke="#1F2D1F" stroke-width="1.2"/>
+              <!-- Red X indicating squashed -->
+              <circle cx="20" cy="20" r="2.5" fill="#D63A2A"/>
+              <path d="M 18.5 18.5 L 21.5 21.5 M 21.5 18.5 L 18.5 21.5" stroke="#F1E7CD" stroke-width="1.2"/>
+            </svg>
+            <div class="mode-name">Duck Creek <em style="font-family:'IM Fell English',serif;font-style:italic;color:var(--gold-deep);letter-spacing:0;">Bug Fix</em></div>
+            <div class="mode-sub">IT Department · Renewal Season</div>
+            <div class="mode-desc">Bugs are flooding in from agents. Direct Tim on Duck Creek, Nate on ImageRight, and Brad on Salesforce before unfixed tickets become claim payouts.</div>
+            <div class="mode-tagline">Home · Dwelling Fire · BOP · Workers Comp</div>
+          </button>
         </div>
 
-        <div class="title-flourish">Both perils share the same $15,000,000 retention</div>
+        <div class="title-flourish">All three perils share the same $15,000,000 retention</div>
       </div>
     </div>
 
@@ -901,7 +925,10 @@ function resizeCanvas() {
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   W = rect.width;
   H = rect.height;
-  if (state.started) layoutWorld();
+  if (state.started) {
+    layoutWorld();
+    if (state.mode === 'bugs') layoutBugMode();
+  }
 }
 window.addEventListener('resize', resizeCanvas);
 
@@ -938,6 +965,104 @@ const HURRICANE_PHASES = [
   { name: 'Landfall Imminent',  duration: 50000, windLevel: 1, debrisRate: 5500,  surgeRate: 14000 },
   { name: 'Eye of the Storm',   duration: 12000, windLevel: 0, debrisRate: 99999, surgeRate: 99999 },
   { name: 'Backside Fury',      duration: 40000, windLevel: 2, debrisRate: 3400,  surgeRate: 9000  },
+];
+
+/* ── Duck Creek Bug Fix mode ── */
+const DEVELOPERS = [
+  {
+    id: 'tim',
+    name: 'Tim',
+    specialty: 'duckcreek',
+    color: '#F4B942',    // Duck Creek yellow
+    colorDark: '#B88A2E',
+    role: 'Duck Creek Developer',
+    avatar: 'T',
+  },
+  {
+    id: 'nate',
+    name: 'Nate',
+    specialty: 'imageright',
+    color: '#6FBF73',    // ImageRight green
+    colorDark: '#4A8F4F',
+    role: 'ImageRight Integration',
+    avatar: 'N',
+  },
+  {
+    id: 'brad',
+    name: 'Brad',
+    specialty: 'salesforce',
+    color: '#00A1E0',    // Salesforce blue
+    colorDark: '#006FA0',
+    role: 'Salesforce Developer',
+    avatar: 'B',
+  },
+];
+
+const BUG_SYSTEMS = {
+  duckcreek: {
+    label: 'Duck Creek',
+    color: '#F4B942',
+    colorDark: '#B88A2E',
+    bugs: [
+      "Rating engine infinite loop",
+      "Form print fails on endorsement",
+      "Policy period calc off by one day",
+      "Endorsement math rounding error",
+      "ManuScript 'pop from empty stack'",
+      "Mortgagee address won't save",
+      "GetAccountInfo SOAP timeout",
+      "Billing plan change not applying",
+      "PCN lifecycle stuck pending",
+      "Installment schedule duplicated",
+    ],
+  },
+  imageright: {
+    label: 'ImageRight',
+    color: '#6FBF73',
+    colorDark: '#4A8F4F',
+    bugs: [
+      "Doc won't index to policy",
+      "OCR failed on scanned app",
+      "Missing attachment on claim",
+      "Folder routing sending to wrong queue",
+      "Barcode not recognized",
+      "Workflow step stuck indefinitely",
+      "Email import dropped",
+      "Metadata tags not applying",
+      "Version history corrupted",
+    ],
+  },
+  salesforce: {
+    label: 'Salesforce',
+    color: '#00A1E0',
+    colorDark: '#006FA0',
+    bugs: [
+      "Aura component rendering blank",
+      "Apex CPU time limit hit",
+      "Flow throwing null pointer",
+      "Duck Creek sync timeout",
+      "LWC not receiving events",
+      "Record trigger infinite recursion",
+      "Validation rule blocking save",
+      "Einstein prediction returning null",
+      "Lightning page won't load",
+      "Platform event not firing",
+    ],
+  },
+};
+
+const LINES_OF_BUSINESS = [
+  { id: 'home',  label: 'Home',         costMult: 1.0,  color: '#4A7A8C' },
+  { id: 'df',    label: 'Dwelling Fire', costMult: 0.8,  color: '#D4A84A' },
+  { id: 'bop',   label: 'BOP',          costMult: 1.4,  color: '#7A1F28' },
+  { id: 'wc',    label: 'Workers Comp', costMult: 1.8,  color: '#3A5A3E' },
+];
+
+const BUG_SHIFTS = [
+  { name: 'Morning Stand-up',  duration: 45000, spawnInterval: 4800, label: 'Shift I' },
+  { name: 'Midday Scrum',      duration: 45000, spawnInterval: 3200, label: 'Shift II' },
+  { name: 'End of Quarter',    duration: 45000, spawnInterval: 2200, label: 'Shift III' },
+  { name: 'Renewal Season',    duration: 55000, spawnInterval: 1500, label: 'Shift IV' },
 ];
 
 const state = {
@@ -988,6 +1113,18 @@ const state = {
   waveLevel: 0,            // current storm surge offset (grows with phase)
   surgeTimer: 0,
   debrisTimer: 0,
+  // Bug Fix mode state
+  bugs: [],                // active bugs on screen
+  developers: [],          // runtime dev state
+  selectedBug: null,       // bug ID awaiting assignment
+  shift: 0,                // 0..3 which shift we're in
+  shiftTimer: 0,
+  bugSpawnTimer: 0,
+  bugsFixed: 0,
+  bugsEscaped: 0,
+  bugSerialCounter: 1001,
+  escalatesRemaining: 3,
+  blairAvailable: true,
 };
 
 /* ═══════════════════════════════════════════════════
@@ -1053,6 +1190,45 @@ const TELEGRAMS_FIRE = [
   },
 ];
 
+const TELEGRAMS_BUGS = [
+  { at: 0.10, body:
+    "Blair: hey team, agents are noticing the form print issue. tim can you take a look when you get a sec? no rush. (it's kind of a rush)"
+  },
+  { at: 0.22, body:
+    "Blair: ok the queue is getting longer. let's tighten up. nate, can you batch those imageright tickets? brad, salesforce sync errors are spiking again."
+  },
+  { at: 0.34, body:
+    "Blair: just got off a call with the Cherry Hill agency. they said and I quote 'the system is unusable today.' please tell me someone is on this."
+  },
+  { at: 0.46, body:
+    "Blair: VP just walked over to my desk. did not look happy. i need wins on the board people. ANY wins."
+  },
+  { at: 0.58, body:
+    "Blair: Tim, I see you've got 4 duck creek tickets in progress. I love the energy but please actually finish one before starting the next.",
+    urgent: true
+  },
+  { at: 0.69, body:
+    "Blair: Brad just told me 'it works on my machine.' Brad. brad. that is not a fix. that is a feeling.",
+    urgent: true
+  },
+  { at: 0.78, body:
+    "Blair: Nate is making good progress on imageright but he just asked if 'workers comp' is one word or two. concerning.",
+    urgent: true
+  },
+  { at: 0.86, body:
+    "Blair: agents are now CC'ing the CEO on bug reports. the CEO is asking what 'OCR' stands for. send help.",
+    urgent: true
+  },
+  { at: 0.93, body:
+    "Blair: just got a meeting invite titled 'IT Performance Review.' it's in 30 minutes. I am updating my LinkedIn.",
+    urgent: true
+  },
+  { at: 0.97, body:
+    "Blair: ok new strategy. when the bugs come in just close them as 'works as designed.' i'm kidding. unless?",
+    urgent: true
+  },
+];
+
 const TELEGRAMS_HURRICANE = [
   { at: 0.10, body:
     "National Hurricane Center bulletin on reinsurer desks. Swiss Re cat team has set up a war room. They have snacks."
@@ -1096,16 +1272,20 @@ function showTelegram(body, opts) {
   el.className = 'telegram' + (opts.urgent ? ' urgent' : '');
 
   const serial = telegramSerial++;
+  const isSlack = state.mode === 'bugs';
+  const fromText = isSlack ? '#it-bugs · slack' : 'Guy Carpenter &amp; Co.';
+  const titleText = isSlack ? 'Message' : 'Telegram';
+  const exchangeText = isSlack ? 'Cumberland IT' : 'Bridgeton Exchange';
 
   el.innerHTML = `
     <div class="telegram-header">
-      <span class="telegram-title">Telegram</span>
-      <span class="telegram-from">Guy Carpenter &amp; Co.</span>
+      <span class="telegram-title">${titleText}</span>
+      <span class="telegram-from">${fromText}</span>
     </div>
-    <div class="telegram-body">${body}</div>
+    <div class="telegram-body" style="${isSlack ? 'text-transform:none;font-size:13px;' : ''}">${body}</div>
     <div class="telegram-footer">
       <span>№ ${serial}</span>
-      <span>Bridgeton Exchange</span>
+      <span>${exchangeText}</span>
     </div>
   `;
 
@@ -1124,7 +1304,9 @@ function showTelegram(body, opts) {
 
 function checkTelegrams() {
   const pct = state.claims / RETENTION;
-  const list = state.mode === 'hurricane' ? TELEGRAMS_HURRICANE : TELEGRAMS_FIRE;
+  const list = state.mode === 'hurricane' ? TELEGRAMS_HURRICANE
+             : state.mode === 'bugs'      ? TELEGRAMS_BUGS
+             : TELEGRAMS_FIRE;
   for (let i = 0; i < list.length; i++) {
     if (state.telegramsSent.has(i)) continue;
     if (pct >= list[i].at) {
@@ -2494,6 +2676,550 @@ function drawHurricaneBuilding(ctx, b) {
 }
 
 /* ═══════════════════════════════════════════════════
+   BUG FIX MODE — Tickets, devs, fix mechanics
+═══════════════════════════════════════════════════ */
+
+function spawnBug() {
+  const sysIds = Object.keys(BUG_SYSTEMS);
+  const sysId = sysIds[Math.floor(Math.random() * sysIds.length)];
+  const system = BUG_SYSTEMS[sysId];
+  const desc = system.bugs[Math.floor(Math.random() * system.bugs.length)];
+  const lob = LINES_OF_BUSINESS[Math.floor(Math.random() * LINES_OF_BUSINESS.length)];
+
+  // Severity timer ramps with shift
+  const baseLifespan = 18000 - state.shift * 2200;
+  const lifespan = Math.max(8000, baseLifespan + rand(-2000, 2000));
+
+  // Position in queue — stack on left side
+  const queueIndex = state.bugs.length;
+  const queueX = 24;
+  const queueY = 80 + queueIndex * 76;
+
+  state.bugs.push({
+    id: state.bugSerialCounter++,
+    sysId, sys: system,
+    desc,
+    lob,
+    age: 0,
+    lifespan,
+    x: queueX,
+    y: queueY,
+    targetX: queueX,
+    targetY: queueY,
+    state: 'queued',  // 'queued' | 'in-progress' | 'fixed' | 'escaped'
+    assignedDev: null,
+    fixProgress: 0,
+    fixDuration: 0,
+    selected: false,
+  });
+}
+
+function bugCost(bug) {
+  // Base cost depends on system + LOB multiplier + severity at time of escape
+  const baseBySystem = { duckcreek: 280000, imageright: 220000, salesforce: 240000 };
+  return Math.round(baseBySystem[bug.sysId] * bug.lob.costMult);
+}
+
+function reflowQueue() {
+  let q = 0;
+  for (const bug of state.bugs) {
+    if (bug.state === 'queued') {
+      bug.targetX = 24;
+      bug.targetY = 80 + q * 76;
+      q++;
+    }
+  }
+}
+
+function tryAssignBug(bug, dev) {
+  if (!bug || !dev) return false;
+  if (dev.busy) {
+    flash(`${dev.name} is already on a ticket — try another dev`, 'bad');
+    return false;
+  }
+  if (bug.state !== 'queued') return false;
+
+  // Move bug to dev's workstation
+  bug.state = 'in-progress';
+  bug.assignedDev = dev.id;
+  bug.targetX = dev.x - 30;
+  bug.targetY = dev.y + 6;
+
+  const onSpec = dev.specialty === bug.sysId;
+  bug.fixDuration = onSpec ? 3500 : 7500; // off-spec is 2x+
+  bug.fixProgress = 0;
+
+  dev.busy = true;
+  dev.currentBug = bug.id;
+  dev.workShake = 0;
+
+  flash(`${dev.name} taking on ${bug.sys.label} ticket #${bug.id}${onSpec ? '' : ' (off-spec)'}`, onSpec ? 'good' : '');
+  reflowQueue();
+  return true;
+}
+
+function freeDeveloper(dev, finishedBug) {
+  dev.busy = false;
+  dev.currentBug = null;
+  if (finishedBug) {
+    finishedBug.state = 'fixed';
+    state.bugsFixed++;
+    state.popups.push(new Popup(dev.x, dev.y - 30, '✓ FIXED', '#6FBF73'));
+    flash(`${dev.name} closed ticket #${finishedBug.id} (${finishedBug.sys.label})`, 'good');
+  }
+}
+
+function blairEscalate() {
+  if (!state.blairAvailable || state.escalatesRemaining <= 0) {
+    flash('Blair is on a 1:1 — no escalations available', 'bad');
+    return;
+  }
+  // Find oldest queued bug or one nearing escape
+  const candidates = state.bugs.filter(b => b.state === 'queued');
+  if (candidates.length === 0) {
+    flash('Blair: no bugs in queue right now. Take a break.', 'good');
+    return;
+  }
+  candidates.sort((a, b) => (b.age / b.lifespan) - (a.age / a.lifespan));
+  const target = candidates[0];
+  target.state = 'fixed';
+  state.bugsFixed++;
+  state.popups.push(new Popup(target.x + 100, target.y, 'BLAIR ESCALATED', '#D4A84A'));
+  flash(`Blair escalated ticket #${target.id} directly to the vendor`, 'good');
+  state.escalatesRemaining--;
+  state.blairAvailable = state.escalatesRemaining > 0;
+  reflowQueue();
+}
+
+function initBugMode() {
+  state.bugs = [];
+  state.developers = DEVELOPERS.map(d => ({
+    ...d,
+    busy: false,
+    currentBug: null,
+    x: 0,
+    y: 0,
+    workShake: 0,
+  }));
+  state.selectedBug = null;
+  state.shift = -1;
+  state.shiftTimer = 0;
+  state.bugSpawnTimer = 1500;
+  state.bugsFixed = 0;
+  state.bugsEscaped = 0;
+  state.escalatesRemaining = 3;
+  state.blairAvailable = true;
+  state.bugSerialCounter = 1001;
+
+  layoutBugMode();
+}
+
+function layoutBugMode() {
+  // Position 3 dev workstations on the right side
+  const stationW = 200;
+  const startX = W - stationW - 30;
+  const stationY = 110;
+  for (let i = 0; i < state.developers.length; i++) {
+    const d = state.developers[i];
+    d.x = startX + stationW / 2;
+    d.y = stationY + i * 130;
+  }
+}
+
+function advanceShift() {
+  state.shift++;
+  state.shiftTimer = 0;
+  state.bugSpawnTimer = 800;
+
+  if (state.shift >= BUG_SHIFTS.length) {
+    endGame(true);
+    return;
+  }
+
+  const shift = BUG_SHIFTS[state.shift];
+  banner(shift.label, shift.name);
+
+  if (state.shift === 1) setTimeout(() => flash('Cherry Hill agency just opened — bug volume rising', 'bad'), 900);
+  if (state.shift === 2) setTimeout(() => flash('End of quarter — every binding bug is now P1', 'bad'), 900);
+  if (state.shift === 3) setTimeout(() => flash('Renewal season — all hands, every system', 'bad'), 900);
+
+  document.getElementById('waveDisplay').textContent = shift.label + ' / IV';
+}
+
+function updateBugMode(dt) {
+  state.shiftTimer += dt;
+  state.bugSpawnTimer += dt;
+
+  const shift = BUG_SHIFTS[state.shift] || BUG_SHIFTS[0];
+
+  // Spawn new bugs
+  if (state.bugSpawnTimer >= shift.spawnInterval) {
+    state.bugSpawnTimer = 0;
+    spawnBug();
+    // Burst spawning at later shifts
+    if (state.shift >= 2 && Math.random() < 0.25) {
+      setTimeout(() => { if (state.running) { spawnBug(); reflowQueue(); } }, 400);
+    }
+    if (state.shift >= 3 && Math.random() < 0.2) {
+      setTimeout(() => { if (state.running) { spawnBug(); reflowQueue(); } }, 800);
+    }
+  }
+
+  // Update each bug
+  for (let i = state.bugs.length - 1; i >= 0; i--) {
+    const bug = state.bugs[i];
+
+    // Smooth toward target position
+    bug.x += (bug.targetX - bug.x) * 0.18;
+    bug.y += (bug.targetY - bug.y) * 0.18;
+
+    if (bug.state === 'queued') {
+      bug.age += dt;
+      if (bug.age >= bug.lifespan) {
+        // Escaped — becomes a claim
+        bug.state = 'escaped';
+        state.bugsEscaped++;
+        const cost = bugCost(bug);
+        state.claims += cost;
+        state.popups.push(new Popup(bug.x + 100, bug.y, '−' + fmt(cost), '#FF8577'));
+        flash(`Ticket #${bug.id} (${bug.sys.label} · ${bug.lob.label}) escalated to claim · ${fmt(cost)}`, 'bad');
+        shakeMeter();
+        updateHUD();
+        if (state.claims >= RETENTION) { endGame(false); return; }
+      }
+    } else if (bug.state === 'in-progress') {
+      bug.fixProgress += dt;
+      const dev = state.developers.find(d => d.id === bug.assignedDev);
+      if (dev) dev.workShake = (dev.workShake || 0) + dt;
+      if (bug.fixProgress >= bug.fixDuration) {
+        if (dev) freeDeveloper(dev, bug);
+      }
+    }
+
+    // Cleanup completed bugs after a moment
+    if ((bug.state === 'fixed' || bug.state === 'escaped') && (bug.cleanupTimer || 0) > 800) {
+      state.bugs.splice(i, 1);
+      reflowQueue();
+    } else if (bug.state === 'fixed' || bug.state === 'escaped') {
+      bug.cleanupTimer = (bug.cleanupTimer || 0) + dt;
+    }
+  }
+
+  // Shift advance
+  if (state.shiftTimer >= shift.duration) {
+    advanceShift();
+  }
+
+  // Update popups + flashes
+  for (let i = state.popups.length - 1; i >= 0; i--) {
+    if (!state.popups[i].update(dt)) state.popups.splice(i, 1);
+  }
+  for (let i = state.flashes.length - 1; i >= 0; i--) {
+    if (!state.flashes[i].update(dt)) state.flashes.splice(i, 1);
+  }
+}
+
+function renderBugMode() {
+  // IT office background — clean, minimal, modern
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+  bgGrad.addColorStop(0, '#2A3340');
+  bgGrad.addColorStop(1, '#1A2030');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle grid lines (like a kanban board)
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  for (let y = 0; y < H; y += 28) {
+    ctx.beginPath();
+    ctx.moveTo(0, y); ctx.lineTo(W, y);
+    ctx.stroke();
+  }
+
+  // Column headers
+  ctx.font = "bold 11px 'IM Fell English SC', serif";
+  ctx.textAlign = 'left';
+  ctx.fillStyle = 'rgba(212,168,74,0.7)';
+  ctx.fillText('INCOMING TICKETS', 24, 60);
+  ctx.textAlign = 'right';
+  ctx.fillText('IT TEAM · CUMBERLAND MUTUAL', W - 30, 60);
+
+  // Vertical divider
+  const dividerX = W * 0.55;
+  ctx.strokeStyle = 'rgba(212,168,74,0.2)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(dividerX, 70);
+  ctx.lineTo(dividerX, H - 60);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw developer workstations
+  for (const dev of state.developers) {
+    drawDeveloper(ctx, dev);
+  }
+
+  // Draw bugs (tickets)
+  for (const bug of state.bugs) {
+    drawBugTicket(ctx, bug);
+  }
+
+  // Blair escalation button (bottom)
+  drawBlairButton(ctx);
+
+  // Popups + flashes
+  for (const f of state.flashes) f.draw(ctx);
+  for (const p of state.popups) p.draw(ctx);
+}
+
+function drawDeveloper(ctx, dev) {
+  const x = dev.x, y = dev.y;
+  const shake = dev.busy ? Math.sin((dev.workShake || 0) * 0.025) * 1.5 : 0;
+
+  // Workstation desk
+  ctx.fillStyle = 'rgba(241,231,205,0.06)';
+  ctx.strokeStyle = dev.busy ? dev.color : 'rgba(241,231,205,0.25)';
+  ctx.lineWidth = dev.busy ? 2 : 1;
+  ctx.fillRect(x - 95, y - 50, 190, 100);
+  ctx.strokeRect(x - 95, y - 50, 190, 100);
+
+  // Avatar circle
+  const avX = x - 65 + shake;
+  const avY = y;
+  ctx.fillStyle = dev.color;
+  ctx.beginPath();
+  ctx.arc(avX, avY, 22, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = dev.colorDark;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Avatar letter
+  ctx.font = "bold 22px 'Cormorant Garamond', serif";
+  ctx.fillStyle = '#1F1C15';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(dev.avatar, avX, avY + 1);
+
+  // Name + role
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = "bold 14px 'Cormorant Garamond', serif";
+  ctx.fillStyle = '#F1E7CD';
+  ctx.fillText(dev.name, x - 35, y - 8);
+  ctx.font = "italic 10px 'IM Fell English', serif";
+  ctx.fillStyle = dev.color;
+  ctx.fillText(dev.role, x - 35, y + 6);
+
+  // Status
+  ctx.font = "10px 'Cormorant Garamond', serif";
+  if (dev.busy) {
+    ctx.fillStyle = '#D63A2A';
+    ctx.fillText('● working...', x - 35, y + 22);
+    // Progress bar
+    const bug = state.bugs.find(b => b.id === dev.currentBug);
+    if (bug) {
+      const w = 90, h = 4;
+      const px = x - 35, py = y + 28;
+      ctx.fillStyle = 'rgba(241,231,205,0.15)';
+      ctx.fillRect(px, py, w, h);
+      ctx.fillStyle = dev.color;
+      ctx.fillRect(px, py, w * (bug.fixProgress / bug.fixDuration), h);
+    }
+  } else {
+    ctx.fillStyle = '#6FBF73';
+    ctx.fillText('● available', x - 35, y + 22);
+  }
+
+  // Selection highlight if a bug is currently selected
+  if (state.selectedBug && !dev.busy) {
+    const bug = state.bugs.find(b => b.id === state.selectedBug);
+    if (bug && bug.state === 'queued') {
+      const onSpec = dev.specialty === bug.sysId;
+      const pulseA = 0.4 + 0.4 * Math.sin(performance.now() * 0.006);
+      ctx.strokeStyle = onSpec ? `rgba(111,191,115,${pulseA})` : `rgba(212,168,74,${pulseA * 0.6})`;
+      ctx.lineWidth = 3;
+      ctx.strokeRect(x - 97, y - 52, 194, 104);
+      // "Tap to assign" hint
+      ctx.font = "italic 10px 'IM Fell English', serif";
+      ctx.fillStyle = onSpec ? '#6FBF73' : '#D4A84A';
+      ctx.textAlign = 'center';
+      ctx.fillText(onSpec ? '⟵ specialist · tap' : '⟵ off-spec · 2x time', x, y - 58);
+    }
+  }
+}
+
+function drawBugTicket(ctx, bug) {
+  const x = bug.x, y = bug.y;
+  const w = 280, h = 64;
+
+  // Skip if completely cleaned up
+  if (bug.state === 'fixed' && (bug.cleanupTimer || 0) > 600) return;
+
+  // Card background
+  let bgColor, borderColor;
+  if (bug.state === 'fixed') {
+    bgColor = 'rgba(111,191,115,0.18)';
+    borderColor = '#6FBF73';
+  } else if (bug.state === 'escaped') {
+    bgColor = 'rgba(214,58,42,0.18)';
+    borderColor = '#D63A2A';
+  } else if (bug.state === 'in-progress') {
+    bgColor = 'rgba(241,231,205,0.06)';
+    borderColor = bug.sys.color;
+  } else {
+    // Queued — color shifts toward red as it ages
+    const t = bug.age / bug.lifespan;
+    if (t < 0.5) {
+      bgColor = 'rgba(241,231,205,0.06)';
+      borderColor = bug.sys.color;
+    } else if (t < 0.8) {
+      bgColor = 'rgba(244,170,60,0.12)';
+      borderColor = '#F4823C';
+    } else {
+      // Pulse red urgency
+      const pulse = 0.5 + 0.5 * Math.sin(performance.now() * 0.012);
+      bgColor = `rgba(214,58,42,${0.15 + pulse * 0.15})`;
+      borderColor = '#D63A2A';
+    }
+  }
+
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = borderColor;
+  ctx.lineWidth = bug.selected ? 3 : (state.selectedBug === bug.id ? 3 : 1.5);
+  ctx.strokeRect(x, y, w, h);
+
+  // System badge (left side colored stripe)
+  ctx.fillStyle = bug.sys.color;
+  ctx.fillRect(x, y, 6, h);
+
+  // Ticket number + system
+  ctx.font = "bold 11px 'IM Fell English SC', serif";
+  ctx.fillStyle = bug.sys.color;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText(`#${bug.id} · ${bug.sys.label}`, x + 14, y + 8);
+
+  // LOB tag (right side pill)
+  const lobW = 50;
+  ctx.fillStyle = bug.lob.color;
+  ctx.fillRect(x + w - lobW - 8, y + 6, lobW, 14);
+  ctx.font = "bold 9px 'Cormorant Garamond', serif";
+  ctx.fillStyle = '#F1E7CD';
+  ctx.textAlign = 'center';
+  ctx.fillText(bug.lob.label.toUpperCase(), x + w - lobW/2 - 8, y + 9);
+
+  // Bug description
+  ctx.font = "13px 'Cormorant Garamond', serif";
+  ctx.fillStyle = '#F1E7CD';
+  ctx.textAlign = 'left';
+  ctx.fillText(bug.desc, x + 14, y + 26);
+
+  // Status footer
+  if (bug.state === 'fixed') {
+    ctx.font = "bold 11px 'IM Fell English SC', serif";
+    ctx.fillStyle = '#6FBF73';
+    ctx.fillText('✓ RESOLVED', x + 14, y + 46);
+  } else if (bug.state === 'escaped') {
+    ctx.font = "bold 11px 'IM Fell English SC', serif";
+    ctx.fillStyle = '#D63A2A';
+    ctx.fillText('✗ ESCALATED TO CLAIM', x + 14, y + 46);
+  } else if (bug.state === 'in-progress') {
+    ctx.font = "italic 10px 'IM Fell English', serif";
+    const dev = state.developers.find(d => d.id === bug.assignedDev);
+    ctx.fillStyle = dev ? dev.color : '#F1E7CD';
+    ctx.fillText(`assigned: ${dev ? dev.name : '?'}`, x + 14, y + 48);
+  } else {
+    // Severity timer bar
+    const t = bug.age / bug.lifespan;
+    const barW = w - 28;
+    const px = x + 14, py = y + h - 10;
+    ctx.fillStyle = 'rgba(241,231,205,0.1)';
+    ctx.fillRect(px, py, barW, 4);
+    ctx.fillStyle = t < 0.5 ? '#6FBF73' : t < 0.8 ? '#D4A84A' : '#D63A2A';
+    ctx.fillRect(px, py, barW * (1 - t), 4);
+  }
+}
+
+function drawBlairButton(ctx) {
+  const x = W * 0.55 - 90;
+  const y = H - 56;
+  const w = 180, h = 38;
+
+  const available = state.escalatesRemaining > 0;
+  ctx.fillStyle = available ? 'rgba(212,168,74,0.18)' : 'rgba(241,231,205,0.05)';
+  ctx.strokeStyle = available ? '#D4A84A' : 'rgba(241,231,205,0.2)';
+  ctx.lineWidth = 2;
+  ctx.fillRect(x, y, w, h);
+  ctx.strokeRect(x, y, w, h);
+
+  ctx.font = "bold 12px 'IM Fell English SC', serif";
+  ctx.fillStyle = available ? '#D4A84A' : 'rgba(241,231,205,0.4)';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(`BLAIR ESCALATE (${state.escalatesRemaining})`, x + w/2, y + h/2);
+
+  // Save bounds for click hit-testing
+  state._blairBtn = { x, y, w, h };
+}
+
+function handleBugClick(p) {
+  // Priority 1: Blair button
+  const bb = state._blairBtn;
+  if (bb && p.x >= bb.x && p.x <= bb.x + bb.w && p.y >= bb.y && p.y <= bb.y + bb.h) {
+    blairEscalate();
+    return;
+  }
+
+  // Priority 2: Click on developer (assign currently-selected bug)
+  let hitDev = null;
+  for (const dev of state.developers) {
+    if (Math.abs(p.x - dev.x) < 95 && Math.abs(p.y - dev.y) < 50) {
+      hitDev = dev;
+      break;
+    }
+  }
+  if (hitDev && state.selectedBug) {
+    const bug = state.bugs.find(b => b.id === state.selectedBug);
+    if (bug && bug.state === 'queued') {
+      tryAssignBug(bug, hitDev);
+      state.selectedBug = null;
+      // Clear all selections
+      for (const b of state.bugs) b.selected = false;
+      return;
+    }
+  }
+  if (hitDev && !state.selectedBug) {
+    flash(`${hitDev.name}: tap a ticket first, then tap me`, '');
+    return;
+  }
+
+  // Priority 3: Click on bug ticket — select it
+  for (const bug of state.bugs) {
+    if (bug.state !== 'queued') continue;
+    if (p.x >= bug.x && p.x <= bug.x + 280 && p.y >= bug.y && p.y <= bug.y + 64) {
+      // Toggle selection
+      if (state.selectedBug === bug.id) {
+        state.selectedBug = null;
+        bug.selected = false;
+      } else {
+        // Clear previous selection
+        for (const b of state.bugs) b.selected = false;
+        state.selectedBug = bug.id;
+        bug.selected = true;
+      }
+      return;
+    }
+  }
+
+  // Tapped empty space — clear selection
+  state.selectedBug = null;
+  for (const b of state.bugs) b.selected = false;
+}
+
+/* ═══════════════════════════════════════════════════
    Scene drawing
 ═══════════════════════════════════════════════════ */
 function drawSky(ctx) {
@@ -2890,6 +3616,9 @@ function startGame() {
   layoutWorld();
   if (state.mode === 'hurricane') {
     advanceHurricanePhase();
+  } else if (state.mode === 'bugs') {
+    initBugMode();
+    advanceShift();
   } else {
     advanceWave();
   }
@@ -2904,17 +3633,33 @@ function startGame() {
 }
 
 function applyModeChrome() {
-  const isHurricane = state.mode === 'hurricane';
-  document.getElementById('marqueeMode').textContent = isHurricane ? 'Hurricane Watch' : 'Fire Brigade';
-  document.getElementById('marqueeLocation').textContent = isHurricane ? 'Ocean City, N.J.' : 'Bridgeton, N.J.';
-  document.getElementById('marqueeDivision').textContent = isHurricane ? 'Coastal Peril Division' : 'Policy & Peril Division';
-  document.getElementById('footerText').textContent = isHurricane
-    ? 'A mutual assurance society against loss by wind and water — offered in good faith to the insured.'
-    : 'A mutual assurance society against loss by fire — offered in good faith to the insured.';
-  // Arena background class for subtle theming
+  const mode = state.mode;
+  let modeName, location, division, footer;
+  if (mode === 'hurricane') {
+    modeName = 'Hurricane Watch';
+    location = 'Ocean City, N.J.';
+    division = 'Coastal Peril Division';
+    footer = 'A mutual assurance society against loss by wind and water — offered in good faith to the insured.';
+  } else if (mode === 'bugs') {
+    modeName = 'IT Department';
+    location = 'Cumberland Mutual';
+    division = 'Information Systems Division';
+    footer = 'A mutual assurance society against loss by software defect — offered in good faith to the insured.';
+  } else {
+    modeName = 'Fire Brigade';
+    location = 'Bridgeton, N.J.';
+    division = 'Policy & Peril Division';
+    footer = 'A mutual assurance society against loss by fire — offered in good faith to the insured.';
+  }
+  document.getElementById('marqueeMode').textContent = modeName;
+  document.getElementById('marqueeLocation').textContent = location;
+  document.getElementById('marqueeDivision').textContent = division;
+  document.getElementById('footerText').textContent = footer;
+
   const arena = document.querySelector('.arena-wrap');
   if (arena) {
-    arena.classList.toggle('hurricane-mode', isHurricane);
+    arena.classList.toggle('hurricane-mode', mode === 'hurricane');
+    arena.classList.toggle('bugs-mode', mode === 'bugs');
   }
 }
 
@@ -2997,25 +3742,51 @@ function endGame(victory) {
   state.running = false;
   state.ended = true;
   const isHurricane = state.mode === 'hurricane';
+  const isBugs = state.mode === 'bugs';
 
-  // Final dramatic telegram from Guy Carpenter — clear the stack first
-  // so this one gets its moment in the spotlight
+  // Final dramatic message — clear the stack first so this one stands alone
   clearTelegrams();
   if (victory) {
-    showTelegram(isHurricane
-      ? "Storm has passed. Boardwalk mostly intact. Ledger held below retention. Swiss Re sends a taffy basket. Treaty renews at normal terms. Congratulations."
-      : "Dawn has broken. Ledger held below retention. Swiss Re sends their regards and a fruit basket. Treaty renews at normal terms. Congratulations."
-    );
+    if (isBugs) {
+      showTelegram(
+        "Blair: y'all. WE DID IT. queue is empty. CIO sent us a pizza voucher. it expires today. Tim is already in the elevator. nice work team."
+      );
+    } else if (isHurricane) {
+      showTelegram(
+        "Storm has passed. Boardwalk mostly intact. Ledger held below retention. Swiss Re sends a taffy basket. Treaty renews at normal terms. Congratulations."
+      );
+    } else {
+      showTelegram(
+        "Dawn has broken. Ledger held below retention. Swiss Re sends their regards and a fruit basket. Treaty renews at normal terms. Congratulations."
+      );
+    }
   } else {
-    showTelegram(isHurricane
-      ? "Treaty triggered at 15 million. Drafting loss notice now. Reinsurers asking why a Ferris wheel is in the ocean. I told them it was a Cat III. They said so is their mood. See you at June renewals. Godspeed."
-      : "Treaty triggered at 15 million. Drafting loss notice now. Reinsurers asking what exactly happened in Bridgeton. I am telling them it was meteors. They are not laughing. See you at June renewals. Godspeed.",
-      { urgent: true }
-    );
+    if (isBugs) {
+      showTelegram(
+        "Blair: ok. the queue won. CFO is asking why claims are up 15M and 'duck creek' is mentioned 47 times in the variance report. i am moving to a farm. don't email me.",
+        { urgent: true }
+      );
+    } else if (isHurricane) {
+      showTelegram(
+        "Treaty triggered at 15 million. Drafting loss notice now. Reinsurers asking why a Ferris wheel is in the ocean. I told them it was a Cat III. They said so is their mood. See you at June renewals. Godspeed.",
+        { urgent: true }
+      );
+    } else {
+      showTelegram(
+        "Treaty triggered at 15 million. Drafting loss notice now. Reinsurers asking what exactly happened in Bridgeton. I am telling them it was meteors. They are not laughing. See you at June renewals. Godspeed.",
+        { urgent: true }
+      );
+    }
   }
 
   let title, subtitle, msg;
-  if (isHurricane) {
+  if (isBugs) {
+    title = victory ? 'Queue Closed' : 'Retention Breached';
+    subtitle = victory ? 'IT department lives to deploy another day' : 'Tickets escalated to claims';
+    msg = victory
+      ? `The team resolved ${state.bugsFixed} tickets across four punishing shifts. Only ${state.bugsEscaped} escalated to claims, holding losses at ${fmt(state.claims)} — well within the $15,000,000 attachment. Tim is taking PTO. Nate is in a meeting about meetings. Brad pushed to prod on a Friday.`
+      : `Unresolved tickets escalated past the $15,000,000 attachment. The reinsurers are now asking pointed questions about IT staffing levels, and someone in finance just learned what a "P1" is.`;
+  } else if (isHurricane) {
     title = victory ? 'Storm Weathered' : 'Retention Breached';
     subtitle = victory ? 'Ocean City endures — ledger holds' : 'Reinsurance has been triggered';
     msg = victory
@@ -3034,7 +3805,21 @@ function endGame(victory) {
   document.getElementById('endMessage').textContent = msg;
 
   const ledger = document.getElementById('finalLedger');
-  if (isHurricane) {
+  if (isBugs) {
+    const totalTickets = state.bugsFixed + state.bugsEscaped;
+    const resolveRate = totalTickets > 0
+      ? Math.round((state.bugsFixed / totalTickets) * 100)
+      : 0;
+    const shiftLabel = ['I', 'II', 'III', 'IV'][Math.min(state.shift, 3)] || 'IV';
+    ledger.innerHTML = `
+      <div><span>Shift Reached</span><span>${shiftLabel} of IV</span></div>
+      <div><span>Tickets Resolved</span><span>${state.bugsFixed}</span></div>
+      <div><span>Tickets Escalated</span><span>${state.bugsEscaped}</span></div>
+      <div><span>Resolution Rate</span><span>${resolveRate}%</span></div>
+      <div><span>Blair Escalations Used</span><span>${3 - state.escalatesRemaining} of 3</span></div>
+      <div><span>Total Claims Paid</span><span>${fmt(state.claims)}</span></div>
+    `;
+  } else if (isHurricane) {
     const phaseLabel = ['I','II','Eye','III'][Math.min(state.phase, 3)] || 'III';
     const deflectRate = (state.debrisDeflected + state.debrisLanded) > 0
       ? Math.round((state.debrisDeflected / (state.debrisDeflected + state.debrisLanded)) * 100)
@@ -3216,6 +4001,10 @@ function update(dt) {
     updateHurricane(dt);
     return;
   }
+  if (state.mode === 'bugs') {
+    updateBugMode(dt);
+    return;
+  }
 
   state.pumpBob += dt * 0.003;
   state.pumpRecoil = Math.max(0, state.pumpRecoil - dt * 0.006);
@@ -3369,6 +4158,10 @@ function render() {
 
   if (state.mode === 'hurricane') {
     renderHurricane();
+    return;
+  }
+  if (state.mode === 'bugs') {
+    renderBugMode();
     return;
   }
 
@@ -3559,6 +4352,10 @@ function handleClick(e) {
     handleHurricaneClick(p);
     return;
   }
+  if (state.mode === 'bugs') {
+    handleBugClick(p);
+    return;
+  }
 
   // Priority 1: Meteors (most urgent — incoming from sky)
   let hitMeteor = null;
@@ -3653,6 +4450,19 @@ const INTRO_COPY = {
       '• <strong>Tap a surge warning</strong> to dispatch a crew to the dune line.<br>' +
       '• Survive <strong>three phases</strong> and the Eye without exceeding the retention.',
     startLabel: 'Hoist the Warning Flag',
+  },
+  bugs: {
+    title: 'Duck Creek <em>Bug Fix</em>',
+    subtitle: 'IT Department · Cumberland Mutual',
+    body1: `The agents are noticing things. Tickets are flooding in across <strong>Home, Dwelling Fire, BOP, and Workers Comp</strong> — Duck Creek rating engines looping, ImageRight docs refusing to index, Salesforce Aura components rendering blank.`,
+    body2: `You are <strong>Blair</strong>. Direct <strong>Tim</strong> on Duck Creek, <strong>Nate</strong> on ImageRight integrations, and <strong>Brad</strong> on Salesforce. Resolve tickets before they escalate into claim payouts and breach the <strong style="color:var(--burgundy)">$15,000,000 retention</strong>.`,
+    rules:
+      '• <strong>Tap a ticket</strong> in the queue to select it, then <strong>tap a developer</strong> to assign.<br>' +
+      '• <strong>Specialists fix in half the time</strong> — Tim on Duck Creek, Nate on ImageRight, Brad on Salesforce.<br>' +
+      '• Tickets escalate to claims if ignored. <strong>Workers Comp costs the most</strong>; Dwelling Fire least.<br>' +
+      '• <strong>Blair Escalate</strong> (3 uses) instantly resolves the oldest ticket via the vendor.<br>' +
+      '• Survive <strong>four shifts</strong> through Renewal Season without breaching the retention.',
+    startLabel: 'Open the Queue',
   },
 };
 
