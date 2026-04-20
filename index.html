@@ -411,13 +411,15 @@ canvas {
 
 /* ───── Overlays ───── */
 .overlay {
-  position: absolute;
+  /* Cover the full viewport so there's only ever ONE scroll context —
+     the overlay itself. No more "header fixed / overlay scrolls" disconnect. */
+  position: fixed;
   inset: 0;
-  background: radial-gradient(ellipse at center, rgba(31,28,21,0.82) 0%, rgba(15,18,32,0.95) 100%);
-  z-index: 10;
+  background: radial-gradient(ellipse at center, rgba(31,28,21,0.92) 0%, rgba(15,18,32,0.98) 100%);
+  z-index: 100;
   padding: 20px;
   backdrop-filter: blur(3px);
-  /* Scrollable: use block layout so the card can be taller than viewport */
+  /* Scrollable when content exceeds viewport */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   display: block;
@@ -433,13 +435,19 @@ canvas {
   width: 100%;
   position: relative;
   box-shadow: 0 20px 60px rgba(15,18,32,0.6);
-  /* Horizontally center + vertically center (when fits) or top-align (when overflows) */
-  margin: 20px auto;
+  /* Center horizontally with auto margins; small top/bottom breathing room */
+  margin: 24px auto;
 }
 
-/* When content is shorter than viewport, center it nicely */
+/* When content is shorter than viewport, center it vertically */
 @media (min-height: 700px) {
-  .card { margin: max(20px, calc(50vh - 50% - 40px)) auto 20px; }
+  .card { margin: max(24px, calc(50vh - 50% - 40px)) auto 24px; }
+}
+
+/* When an overlay is active, lock the background page so there's no
+   "double scroll" feeling on mobile */
+body.overlay-active {
+  overflow: hidden;
 }
 
 .card::before,
@@ -2890,6 +2898,7 @@ function startGame() {
   document.getElementById('startScreen').classList.add('hidden');
   document.getElementById('endScreen').classList.add('hidden');
   document.getElementById('titleScreen').classList.add('hidden');
+  updateBodyOverlayState();
 
   requestAnimationFrame(tick);
 }
@@ -3058,6 +3067,7 @@ function endGame(victory) {
   // Give the player a beat to read the final telegram before the card appears
   setTimeout(() => {
     document.getElementById('endScreen').classList.remove('hidden');
+    updateBodyOverlayState();
   }, 3200);
 }
 
@@ -3646,6 +3656,13 @@ const INTRO_COPY = {
   },
 };
 
+function updateBodyOverlayState() {
+  const anyOpen = !document.getElementById('titleScreen').classList.contains('hidden')
+               || !document.getElementById('startScreen').classList.contains('hidden')
+               || !document.getElementById('endScreen').classList.contains('hidden');
+  document.body.classList.toggle('overlay-active', anyOpen);
+}
+
 function showIntroFor(mode) {
   state.mode = mode;
   const copy = INTRO_COPY[mode];
@@ -3659,12 +3676,14 @@ function showIntroFor(mode) {
   document.getElementById('titleScreen').classList.add('hidden');
   document.getElementById('startScreen').classList.remove('hidden');
   document.getElementById('endScreen').classList.add('hidden');
+  updateBodyOverlayState();
 }
 
 function showTitleScreen() {
   document.getElementById('titleScreen').classList.remove('hidden');
   document.getElementById('startScreen').classList.add('hidden');
   document.getElementById('endScreen').classList.add('hidden');
+  updateBodyOverlayState();
   // Clear any lingering telegrams from previous game
   clearTelegrams();
 }
@@ -3694,6 +3713,9 @@ document.getElementById('menuBtn').addEventListener('click', () => {
 
 // Initial canvas size
 resizeCanvas();
+
+// Title screen is visible on load — lock body scroll
+document.body.classList.add('overlay-active');
 
 // Idle attract scene — draw a static pump + buildings behind the title screen
 state.mode = 'fire';
