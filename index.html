@@ -26,6 +26,16 @@
   --night-2: #1A1A2E;
   --night-3: #251F1A;
   --water: #9FD1E8;
+  /* Hurricane palette */
+  --ocean-1: #4A7A8C;
+  --ocean-2: #2E5668;
+  --ocean-deep: #1A3A48;
+  --sand: #D9C8A0;
+  --sand-dark: #A8966B;
+  --storm-sky-1: #3A4050;
+  --storm-sky-2: #1E2330;
+  --storm-wind: #8FA4B5;
+  --foam: #E8F0F4;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -498,6 +508,120 @@ canvas {
 
 .rules strong { color: var(--burgundy); font-weight: 600; }
 
+/* ───── Title / Mode selector ───── */
+.title-card {
+  max-width: 620px;
+}
+
+.title-emblem {
+  display: block;
+  margin: 0 auto 10px;
+  width: 68px;
+  height: 54px;
+  opacity: 0.92;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 18px 0 8px;
+}
+
+@media (max-width: 560px) {
+  .mode-grid { grid-template-columns: 1fr; }
+}
+
+.mode-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(212,168,74,0.08) 100%);
+  border: 2px solid var(--ink);
+  padding: 18px 18px 16px;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+  font-family: inherit;
+  color: inherit;
+  overflow: hidden;
+}
+
+.mode-card::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(31,28,21,0.15);
+  pointer-events: none;
+}
+
+.mode-card:hover {
+  background: linear-gradient(180deg, rgba(212,168,74,0.18) 0%, rgba(212,168,74,0.05) 100%);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.mode-card:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.mode-icon {
+  width: 46px;
+  height: 46px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.mode-name {
+  font-family: 'IM Fell English SC', serif;
+  font-size: 15px;
+  letter-spacing: 2px;
+  color: var(--ink);
+  margin-bottom: 2px;
+  line-height: 1.15;
+}
+
+.mode-sub {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--gold-deep);
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+
+.mode-desc {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+
+.mode-tagline {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 11.5px;
+  color: var(--burgundy);
+  border-top: 1px dotted rgba(31,28,21,0.3);
+  padding-top: 6px;
+}
+
+.title-flourish {
+  text-align: center;
+  margin: 8px 0 0;
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--gold-deep);
+  letter-spacing: 0.5px;
+}
+
+.title-flourish::before,
+.title-flourish::after {
+  content: '·';
+  margin: 0 10px;
+  color: var(--gold-dark);
+}
+
 .btn {
   font-family: 'IM Fell English SC', serif;
   font-size: 20px;
@@ -631,8 +755,8 @@ footer {
 
   <header>
     <div class="masthead">
-      <div class="marque">Cumberland Mutual <span class="amp">&amp;</span> Fire Brigade</div>
-      <div class="est">Est. MDCCCXLIV · Bridgeton, N.J.<br>Policy &amp; Peril Division</div>
+      <div class="marque">Cumberland Mutual <span class="amp">&amp;</span> <span id="marqueeMode">Fire Brigade</span></div>
+      <div class="est">Est. MDCCCXLIV · <span id="marqueeLocation">Bridgeton, N.J.</span><br><span id="marqueeDivision">Policy &amp; Peril Division</span></div>
     </div>
     <div class="stats-row">
       <div class="stat-block">
@@ -648,7 +772,7 @@ footer {
       </div>
       <div class="stat-block center">
         <div class="stat-label">Retention</div>
-        <div class="stat-value">$750,000</div>
+        <div class="stat-value">$15,000,000</div>
       </div>
       <div class="stat-block right">
         <div class="stat-label">Alarm Bell</div>
@@ -667,20 +791,62 @@ footer {
     <div class="ticker" id="ticker"></div>
     <div class="telegram-stack" id="telegramStack"></div>
 
-    <div class="overlay" id="startScreen">
+    <div class="overlay" id="titleScreen">
+      <div class="card title-card">
+        <svg class="title-emblem" viewBox="0 0 68 54" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--gold-dark)">
+          <circle cx="20" cy="40" r="9" />
+          <circle cx="48" cy="40" r="9" />
+          <rect x="10" y="24" width="48" height="4" fill="currentColor" stroke="none"/>
+          <path d="M 28 24 L 28 14 L 40 14 L 40 24" fill="currentColor" stroke="none"/>
+          <path d="M 26 14 Q 18 4 10 12" />
+          <path d="M 42 14 Q 50 4 58 12" />
+        </svg>
+        <h1>Cumberland <em>Mutual</em></h1>
+        <div class="subtitle">A recreation in Property &amp; Peril · Est. MDCCCXLIV</div>
+        <p style="text-align:center;margin-top:4px;">Select the peril upon which the Brigade shall be tested.</p>
+
+        <div class="mode-grid">
+          <button class="mode-card" data-mode="fire">
+            <svg class="mode-icon" viewBox="0 0 40 40" fill="none">
+              <path d="M 20 4 Q 14 14 16 22 Q 12 18 10 22 Q 6 30 12 36 Q 16 38 20 38 Q 24 38 28 36 Q 34 30 30 22 Q 28 18 24 22 Q 26 14 20 4 Z" fill="#F4823C" stroke="#A8842E" stroke-width="1"/>
+              <path d="M 20 14 Q 17 20 18 26 Q 16 24 15 26 Q 13 30 16 34 Q 18 35 20 35 Q 22 35 24 34 Q 27 30 25 26 Q 24 24 22 26 Q 23 20 20 14 Z" fill="#FFD54F"/>
+            </svg>
+            <div class="mode-name">The Fire <em style="font-family:'IM Fell English',serif;font-style:italic;color:var(--gold-deep);letter-spacing:0;">Brigade</em></div>
+            <div class="mode-sub">Bridgeton, N.J.</div>
+            <div class="mode-desc">Flames break out across the historic downtown. Direct the pump to save Potter's Tavern, the Cumberland Library, and beyond.</div>
+            <div class="mode-tagline">Fires · Meteors · Eight Alarms</div>
+          </button>
+
+          <button class="mode-card" data-mode="hurricane">
+            <svg class="mode-icon" viewBox="0 0 40 40" fill="none">
+              <path d="M 8 14 Q 20 4 32 14 Q 28 18 22 16 Q 30 20 28 26 Q 24 22 20 24 Q 26 28 22 34 Q 18 28 14 30 Q 16 24 12 22 Q 18 22 14 16 Q 10 18 8 14 Z" fill="#4A7A8C" stroke="#1A3A48" stroke-width="1"/>
+              <circle cx="20" cy="20" r="3" fill="#F1E7CD"/>
+            </svg>
+            <div class="mode-name">The Hurricane <em style="font-family:'IM Fell English',serif;font-style:italic;color:var(--gold-deep);letter-spacing:0;">Watch</em></div>
+            <div class="mode-sub">Ocean City, N.J.</div>
+            <div class="mode-desc">A Cat. III tempest steams toward the boardwalk. Board, sandbag, and evacuate the Music Pier, Flanders Hotel, and Wonderland Pier before landfall.</div>
+            <div class="mode-tagline">Prep · Debris · Storm Surge</div>
+          </button>
+        </div>
+
+        <div class="title-flourish">Both perils share the same $15,000,000 retention</div>
+      </div>
+    </div>
+
+    <div class="overlay hidden" id="startScreen">
       <div class="card">
-        <h1>The Fire <em>Brigade</em></h1>
-        <div class="subtitle">A recreation in Property &amp; Peril &middot; Bridgeton, N.J.</div>
-        <p>Calamity has struck the insured. Flames have broken out across downtown Bridgeton — at Potter's Tavern, the Broad Street Church, the Cumberland Library — and fiery meteors now fall from the heavens besides.</p>
-        <p>You are the Brigade Chief. Preserve the company before its losses exhaust the <strong style="color:var(--burgundy)">$750,000 retention</strong>.</p>
+        <h1 id="introTitle">The Fire <em>Brigade</em></h1>
+        <div class="subtitle" id="introSubtitle">A recreation in Property &amp; Peril · Bridgeton, N.J.</div>
+        <p id="introBody1"></p>
+        <p id="introBody2"></p>
         <div class="rules">
           <div class="rules-title">Standing Orders</div>
-          • <strong>Tap a fire</strong> to direct the pump's water upon it.<br>
-          • <strong>Tap a meteor</strong> to strike it from the sky before it lands.<br>
-          • Fires <strong>grow fiercer</strong> each moment — a Grade V inferno consumes the property entire.<br>
-          • Endure <strong>VIII alarms</strong> without exceeding the retention.
+          <div id="introRules"></div>
         </div>
-        <button class="btn" id="startBtn">Sound the Alarm</button>
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+          <button class="btn" id="startBtn">Begin</button>
+          <button class="btn" id="backBtn" style="background:transparent;color:var(--ink);box-shadow:none;animation:none;font-size:14px;padding:16px 24px;letter-spacing:2px;">← Back</button>
+        </div>
       </div>
     </div>
 
@@ -693,13 +859,16 @@ footer {
           <div class="rules-title">Final Ledger</div>
           <div class="final-ledger" id="finalLedger"></div>
         </div>
-        <button class="btn" id="restartBtn">Draft Anew</button>
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+          <button class="btn" id="restartBtn">Draft Anew</button>
+          <button class="btn" id="menuBtn" style="background:transparent;color:var(--ink);box-shadow:none;animation:none;font-size:14px;padding:16px 24px;letter-spacing:2px;">← Change Peril</button>
+        </div>
       </div>
     </div>
   </div>
 
   <footer>
-    A mutual assurance society against loss by fire — offered in good faith to the insured.
+    <span id="footerText">A mutual assurance society against loss by fire — offered in good faith to the insured.</span>
   </footer>
 
 </div>
@@ -731,21 +900,40 @@ window.addEventListener('resize', resizeCanvas);
 /* ═══════════════════════════════════════════════════
    State
 ═══════════════════════════════════════════════════ */
-const RETENTION = 750000;
+const RETENTION = 15000000;
 const VICTORY_WAVE = 8;
 const WAVE_DURATION = 42000; // ms
 
 const BUILDING_TYPES = [
-  { name: "Potter's Tavern",    value: 140000, w: 102, h: 86  }, // 1750s Revolutionary-era tavern
-  { name: "Big John's Pizza",   value:  85000, w: 90,  h: 80  }, // 90 E Commerce Street
-  { name: "Terrigno's Bakery",  value:  95000, w: 92,  h: 82  }, // 632 N Pearl Street
-  { name: "Gallery 50",         value: 110000, w: 88,  h: 96  }, // Downtown art gallery
-  { name: "Broad St. Church",   value: 185000, w: 98,  h: 118 }, // Old Broad Street Presbyterian, 1795
-  { name: "The Nail House",     value: 130000, w: 104, h: 88  }, // Cumberland Nail & Iron Works, c.1815
-  { name: "Cumberland Library", value: 160000, w: 112, h: 100 }, // Former Cumberland National Bank, 1816
+  { name: "Potter's Tavern",    value: 2800000, w: 102, h: 86  }, // 1750s Revolutionary-era tavern
+  { name: "Big John's Pizza",   value: 1700000, w: 90,  h: 80  }, // 90 E Commerce Street
+  { name: "Terrigno's Bakery",  value: 1900000, w: 92,  h: 82  }, // 632 N Pearl Street
+  { name: "Gallery 50",         value: 2200000, w: 88,  h: 96  }, // Downtown art gallery
+  { name: "Broad St. Church",   value: 3700000, w: 98,  h: 118 }, // Old Broad Street Presbyterian, 1795
+  { name: "The Nail House",     value: 2600000, w: 104, h: 88  }, // Cumberland Nail & Iron Works, c.1815
+  { name: "Cumberland Library", value: 3200000, w: 112, h: 100 }, // Former Cumberland National Bank, 1816
+];
+
+/* ── Hurricane mode — Ocean City, NJ landmarks ── */
+const OC_LANDMARKS = [
+  { name: "Shriver's Taffy",    value: 1900000, w: 90,  h: 82,  style: 'shop' },     // Est. 1898, oldest boardwalk business
+  { name: "Music Pier",         value: 3700000, w: 132, h: 96,  style: 'pier' },     // 1929 ornate arched pier
+  { name: "Johnson's Popcorn",  value: 1560000, w: 82,  h: 76,  style: 'awning' },   // Red/white striped icon
+  { name: "Manco & Manco",      value: 1760000, w: 88,  h: 80,  style: 'awning' },   // Iconic boardwalk pizza
+  { name: "Flanders Hotel",     value: 4500000, w: 120, h: 118, style: 'hotel' },    // "Grand dame" of OC, 1923
+  { name: "OC Tabernacle",      value: 2700000, w: 94,  h: 110, style: 'chapel' },   // Historic auditorium
+  { name: "Wonderland Pier",    value: 3500000, w: 110, h: 112, style: 'ferris' },   // With Ferris wheel
+];
+
+const HURRICANE_PHASES = [
+  { name: 'Tropical Advisory',  duration: 45000, windLevel: 0, debrisRate: 12000, surgeRate: 99999 },
+  { name: 'Landfall Imminent',  duration: 50000, windLevel: 1, debrisRate: 5500,  surgeRate: 14000 },
+  { name: 'Eye of the Storm',   duration: 12000, windLevel: 0, debrisRate: 99999, surgeRate: 99999 },
+  { name: 'Backside Fury',      duration: 40000, windLevel: 2, debrisRate: 3400,  surgeRate: 9000  },
 ];
 
 const state = {
+  mode: 'fire',  // 'fire' | 'hurricane'
   started: false,
   running: false,
   ended:   false,
@@ -777,6 +965,21 @@ const state = {
   pumpTargetX: 0,
   pumpBob: 0,
   pumpRecoil: 0,
+  // Hurricane-specific
+  phase: 0,                // 0..3
+  phaseTimer: 0,
+  debris: [],
+  surges: [],
+  rain: [],
+  windTrails: [],
+  gulls: [],
+  debrisDeflected: 0,
+  debrisLanded: 0,
+  prepActions: 0,
+  lightningFlash: 0,
+  waveLevel: 0,            // current storm surge offset (grows with phase)
+  surgeTimer: 0,
+  debrisTimer: 0,
 };
 
 /* ═══════════════════════════════════════════════════
@@ -808,45 +1011,68 @@ function banner(title, sub) {
 /* ═══════════════════════════════════════════════════
    Guy Carpenter telegrams
    (Increasingly panicked messages from the reinsurance broker
-   as losses eat into the $750k retention)
+   as losses eat into the $15M retention)
 ═══════════════════════════════════════════════════ */
-const TELEGRAMS = [
+const TELEGRAMS_FIRE = [
   { at: 0.13, body:
-    "SWISS RE CAT MODELER FLAGGED BRIDGETON ZIP CODE THIS MORNING STOP " +
-    "EVERYTHING QUIET ON YOUR END STOP QUERY ANY UNUSUAL ACTIVITY STOP"
+    "Swiss Re cat modeler flagged Bridgeton zip code this morning. Everything quiet on your end? Query any unusual activity."
   },
   { at: 0.28, body:
-    "MUNICH RE INQUIRING WHETHER BRIDGETON IS ON FIRE STOP IS IT STOP " +
-    "PLEASE ADVISE BEFORE LUNCH STOP"
+    "Munich Re inquiring whether Bridgeton is on fire. Is it? Please advise before lunch."
   },
   { at: 0.42, body:
-    "LLOYDS SYNDICATES 2020 AND 33 REQUEST URGENT UPDATE STOP " +
-    "ALSO SYNDICATE 510 STOP HAVING DIFFICULTY FIELDING ALL THE CALLS STOP"
+    "Lloyds Syndicates 2020 and 33 request urgent update. Also Syndicate 510. Having difficulty fielding all the calls."
   },
   { at: 0.56, body:
-    "HANNOVER RE CEDING MANAGER ASKS IF SPRINKLERS HAVE BEEN CONSIDERED STOP " +
-    "I SAID YES STOP NOT SURE IF THAT WAS TRUE STOP",
+    "Hannover Re ceding manager asks if sprinklers have been considered. I said yes. Not sure if that was true.",
     urgent: true
   },
   { at: 0.68, body:
-    "SWISS RE HAS OPENED GROUP CHAT ABOUT YOU STOP " +
-    "CONTENTS NOT FLATTERING STOP " +
-    "I ADDED A LAUGHING EMOJI TO SHOW SOLIDARITY STOP",
+    "Swiss Re has opened a group chat about you. Contents not flattering. I added a laughing emoji to show solidarity.",
     urgent: true
   },
   { at: 0.79, body:
-    "URGENT STOP RETRO PANEL BELIEVES METEORS REFERENCE IN BORDEREAU IS TYPO STOP " +
-    "CONFIRM WHETHER LITERAL METEORS STOP ACTUARIES DO NOT MODEL LITERAL METEORS STOP",
+    "Urgent — retro panel believes meteors reference in bordereau is a typo. Confirm whether literal meteors. Actuaries do not model literal meteors.",
     urgent: true
   },
   { at: 0.89, body:
-    "THREE REINSURERS NOW ON CALL REGARDING YOU STOP I WAS NOT INVITED STOP " +
-    "PLEASE TELL ME IT IS UNDER CONTROL STOP TELL ME IT IS UNDER CONTROL STOP",
+    "Three reinsurers now on a call regarding you. I was not invited. Please tell me it is under control. Tell me it is under control.",
     urgent: true
   },
   { at: 0.96, body:
-    "EVERY CAT UNDERWRITER ON THIS CONTINENT IS NOW LOOKING AT BRIDGETON STOP " +
-    "BERKSHIRE JUST JOINED THE CALL STOP WARREN ASKED IF YOU ARE SERIOUS STOP",
+    "Every cat underwriter on this continent is now looking at Bridgeton. Berkshire just joined the call. Warren asked if you are serious.",
+    urgent: true
+  },
+];
+
+const TELEGRAMS_HURRICANE = [
+  { at: 0.10, body:
+    "National Hurricane Center bulletin on reinsurer desks. Swiss Re cat team has set up a war room. They have snacks."
+  },
+  { at: 0.24, body:
+    "Lloyds requests confirmation boardwalk landmarks are boarded. I told them the Music Pier is literally built on a pier. Silence."
+  },
+  { at: 0.38, body:
+    "Munich Re asks if the Flanders has hurricane shutters. Checked Google Street View from 2019. Inconclusive."
+  },
+  { at: 0.52, body:
+    "Hannover Re modeling team says Wonderland Pier's Ferris wheel is not in their vendor model. Because it is a Ferris wheel. They seem upset.",
+    urgent: true
+  },
+  { at: 0.64, body:
+    "Jersey Shore local news is on scene. Reporter standing in knee-deep water for drama. Reinsurers are watching live. One of them just said, and I quote, this is bad.",
+    urgent: true
+  },
+  { at: 0.76, body:
+    "Governor Murphy just tweeted about Ocean City. Berkshire asked what a Manco is. I did not have a good answer.",
+    urgent: true
+  },
+  { at: 0.87, body:
+    "Shriver's Taffy went viral. Retro market is now a meme. Cat bond investors are demanding an emergency call. Send help.",
+    urgent: true
+  },
+  { at: 0.95, body:
+    "Every Bermuda reinsurer is on a plane right now. Not for work. Just to see it. One of them brought a drone.",
     urgent: true
   },
 ];
@@ -862,19 +1088,13 @@ function showTelegram(body, opts) {
   el.className = 'telegram' + (opts.urgent ? ' urgent' : '');
 
   const serial = telegramSerial++;
-  const formatted = body
-    .split(/\bSTOP\b/)
-    .map(s => s.trim())
-    .filter(s => s.length > 0)
-    .map(s => s + ' <span class="stop">STOP</span>')
-    .join(' ');
 
   el.innerHTML = `
     <div class="telegram-header">
       <span class="telegram-title">Telegram</span>
       <span class="telegram-from">Guy Carpenter &amp; Co.</span>
     </div>
-    <div class="telegram-body">${formatted}</div>
+    <div class="telegram-body">${body}</div>
     <div class="telegram-footer">
       <span>№ ${serial}</span>
       <span>Bridgeton Exchange</span>
@@ -896,13 +1116,14 @@ function showTelegram(body, opts) {
 
 function checkTelegrams() {
   const pct = state.claims / RETENTION;
-  for (let i = 0; i < TELEGRAMS.length; i++) {
+  const list = state.mode === 'hurricane' ? TELEGRAMS_HURRICANE : TELEGRAMS_FIRE;
+  for (let i = 0; i < list.length; i++) {
     if (state.telegramsSent.has(i)) continue;
-    if (pct >= TELEGRAMS[i].at) {
+    if (pct >= list[i].at) {
       state.telegramsSent.add(i);
       // Slight delay so they arrive just after the hit, not on the same frame
       setTimeout(() => {
-        if (state.running) showTelegram(TELEGRAMS[i].body, TELEGRAMS[i]);
+        if (state.running) showTelegram(list[i].body, list[i]);
       }, 400);
       break; // Only one telegram per trigger check
     }
@@ -918,17 +1139,19 @@ function clearTelegrams() {
    World layout
 ═══════════════════════════════════════════════════ */
 function layoutWorld() {
+  const isHurricane = state.mode === 'hurricane';
+  const source = isHurricane ? OC_LANDMARKS : BUILDING_TYPES;
   const count = Math.min(7, Math.max(5, Math.floor(W / 150)));
   const margin = 60;
   const usable = W - margin * 2;
   const step = usable / (count - 1);
-  const groundY = H - 78;
+  const groundY = H - (isHurricane ? 58 : 78);
 
   // Rebuild buildings (preserve destroyed state if same index exists)
   const old = state.buildings.slice();
   state.buildings = [];
   for (let i = 0; i < count; i++) {
-    const t = BUILDING_TYPES[i % BUILDING_TYPES.length];
+    const t = source[i % source.length];
     const prior = old[i];
     state.buildings.push({
       id: i,
@@ -938,7 +1161,9 @@ function layoutWorld() {
       y: groundY,
       w: t.w,
       h: t.h,
+      style: t.style,
       destroyed: prior ? prior.destroyed : false,
+      prep: 0,  // hurricane: 0-3
       roofStyle: i % 3,
       windowSeed: (i * 13.37) % 1,
     });
@@ -948,16 +1173,18 @@ function layoutWorld() {
   state.pumpX = W / 2;
   state.pumpTargetX = W / 2;
 
-  // Stars
+  // Stars (fire mode only)
   state.stars = [];
-  const starCount = Math.floor((W * H) / 8000);
-  for (let i = 0; i < starCount; i++) {
-    state.stars.push({
-      x: Math.random() * W,
-      y: Math.random() * H * 0.55,
-      s: Math.random() * 1.4 + 0.2,
-      tw: Math.random() * Math.PI * 2,
-    });
+  if (!isHurricane) {
+    const starCount = Math.floor((W * H) / 8000);
+    for (let i = 0; i < starCount; i++) {
+      state.stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H * 0.55,
+        s: Math.random() * 1.4 + 0.2,
+        tw: Math.random() * Math.PI * 2,
+      });
+    }
   }
 }
 
@@ -1132,7 +1359,7 @@ class Fire {
 
   peakValue() {
     const peak = this._peak || this.intensity;
-    const table = { 1: 2000, 2: 8000, 3: 20000, 4: 38000, 5: 65000 };
+    const table = { 1: 40000, 2: 160000, 3: 400000, 4: 760000, 5: 1300000 };
     return table[Math.min(5, Math.max(1, peak))];
   }
 
@@ -1539,6 +1766,726 @@ class ImpactFlash {
 }
 
 /* ═══════════════════════════════════════════════════
+   HURRICANE MODE — Flying debris, surges, rain
+═══════════════════════════════════════════════════ */
+
+// Flying debris: umbrellas, chairs, trash cans, boardwalk signs
+class Debris {
+  constructor(windLevel) {
+    // Spawn off-screen right (storm comes from ocean side), travels left
+    const types = ['umbrella', 'chair', 'can', 'sign', 'board'];
+    this.type = types[Math.floor(Math.random() * types.length)];
+
+    const groundY = H - 60;
+    // Debris flies horizontally across the sky/midground
+    this.y = rand(H * 0.25, groundY - 40);
+    this.x = W + 30;
+
+    // Velocity left with some tumble
+    const speed = 0.22 + windLevel * 0.08 + Math.random() * 0.1;
+    this.vx = -speed;
+    this.vy = rand(-0.04, 0.04);
+
+    this.rotation = Math.random() * Math.PI * 2;
+    this.rotSpeed = (Math.random() - 0.5) * 0.15;
+    this.size = 16 + Math.random() * 8;
+    this.active = true;
+    this.landed = false;
+
+    // Target: aim roughly at a building height
+    this.targetBuildingY = groundY - 30;
+  }
+
+  update(dt) {
+    this.x += this.vx * dt;
+    this.y += this.vy * dt + (dt * 0.025); // slight downward drift — flying debris falls over time
+    this.vy += 0.0004 * dt;
+    this.rotation += this.rotSpeed;
+
+    // If below ground / off left, it lands
+    if (this.x < -40) {
+      this.active = false;
+      this.offscreen = true;
+      return;
+    }
+
+    // Check collision with a non-destroyed building
+    for (const b of state.buildings) {
+      if (b.destroyed) continue;
+      const dx = Math.abs(this.x - b.x);
+      const dy = this.y - (b.y - b.h * 0.5);
+      if (dx < b.w / 2 + 8 && Math.abs(dy) < b.h * 0.5 + 10) {
+        this.active = false;
+        this.landed = true;
+        this.hitBuilding = b;
+        return;
+      }
+    }
+
+    // Or if it reaches the boardwalk level, it just tumbles off
+    if (this.y > H - 68) {
+      this.active = false;
+      this.offscreen = true;
+    }
+  }
+
+  draw(ctx) {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotation);
+    const s = this.size;
+
+    switch (this.type) {
+      case 'umbrella': {
+        // Striped beach umbrella (torn from its pole)
+        ctx.fillStyle = '#D63A2A';
+        ctx.beginPath();
+        ctx.arc(0, 0, s, Math.PI, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#F1E7CD';
+        // Stripes
+        for (let i = -2; i <= 2; i += 2) {
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(Math.cos(Math.PI + i * 0.2) * s, Math.sin(Math.PI + i * 0.2) * s);
+          ctx.lineTo(Math.cos(Math.PI + (i + 1) * 0.2) * s, Math.sin(Math.PI + (i + 1) * 0.2) * s);
+          ctx.closePath();
+          ctx.fill();
+        }
+        ctx.strokeStyle = '#1F1C15';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(-s * 0.9, 0); ctx.lineTo(s * 0.9, 0);
+        ctx.stroke();
+        // Pole
+        ctx.strokeStyle = '#7A5F1E';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, 0); ctx.lineTo(0, s * 1.4);
+        ctx.stroke();
+        break;
+      }
+      case 'chair': {
+        // Folding beach chair
+        ctx.strokeStyle = '#E8DBB7';
+        ctx.fillStyle = '#4A7A8C';
+        ctx.lineWidth = 2;
+        ctx.fillRect(-s * 0.7, -s * 0.4, s * 1.4, s * 0.4);
+        ctx.strokeRect(-s * 0.7, -s * 0.4, s * 1.4, s * 0.4);
+        // Legs
+        ctx.beginPath();
+        ctx.moveTo(-s * 0.6, 0); ctx.lineTo(-s * 0.8, s * 0.8);
+        ctx.moveTo(s * 0.6, 0); ctx.lineTo(s * 0.8, s * 0.8);
+        ctx.strokeStyle = '#1F1C15';
+        ctx.stroke();
+        break;
+      }
+      case 'can': {
+        // Trash can
+        ctx.fillStyle = '#3A3426';
+        ctx.fillRect(-s * 0.6, -s * 0.8, s * 1.2, s * 1.6);
+        ctx.strokeStyle = '#1F1C15';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(-s * 0.6, -s * 0.8, s * 1.2, s * 1.6);
+        // Bands
+        ctx.beginPath();
+        ctx.moveTo(-s * 0.6, -s * 0.4); ctx.lineTo(s * 0.6, -s * 0.4);
+        ctx.moveTo(-s * 0.6, s * 0.2); ctx.lineTo(s * 0.6, s * 0.2);
+        ctx.stroke();
+        break;
+      }
+      case 'sign': {
+        // "Boardwalk" sign
+        ctx.fillStyle = '#D4A84A';
+        ctx.fillRect(-s, -s * 0.4, s * 2, s * 0.8);
+        ctx.strokeStyle = '#1F1C15';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(-s, -s * 0.4, s * 2, s * 0.8);
+        ctx.fillStyle = '#1F1C15';
+        ctx.font = "bold 7px serif";
+        ctx.textAlign = 'center';
+        ctx.fillText('BOARDWALK', 0, 2);
+        break;
+      }
+      default: {
+        // Broken boardwalk plank
+        ctx.fillStyle = '#8B6F4A';
+        ctx.fillRect(-s, -s * 0.2, s * 2, s * 0.4);
+        ctx.strokeStyle = '#3A3426';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(-s, -s * 0.2, s * 2, s * 0.4);
+        // Grain
+        ctx.beginPath();
+        ctx.moveTo(-s * 0.5, -s * 0.15); ctx.lineTo(s * 0.5, -s * 0.15);
+        ctx.moveTo(-s * 0.3, 0); ctx.lineTo(s * 0.7, 0);
+        ctx.stroke();
+      }
+    }
+
+    ctx.restore();
+
+    // Motion trail
+    const trailA = 0.15;
+    ctx.strokeStyle = `rgba(232,240,244,${trailA})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(this.x, this.y);
+    ctx.lineTo(this.x - this.vx * 40, this.y - this.vy * 40);
+    ctx.stroke();
+  }
+}
+
+// Storm surge — tappable wave warnings that will damage unsandbagged buildings
+class Surge {
+  constructor() {
+    this.targetIndex = Math.floor(Math.random() * state.buildings.length);
+    const b = state.buildings[this.targetIndex];
+    if (!b) { this.active = false; return; }
+    this.targetX = b.x;
+    this.x = W + 60;
+    this.y = H - 50;
+    this.vx = -0.12;
+    this.age = 0;
+    this.duration = 5500;
+    this.active = true;
+    this.intercepted = false;
+    this.warned = true;
+  }
+
+  update(dt) {
+    this.age += dt;
+    this.x += this.vx * dt;
+
+    // When the surge "arrives" at the target building
+    if (this.age >= this.duration) {
+      this.active = false;
+      this.landed = true;
+    }
+  }
+
+  draw(ctx) {
+    // Rolling wave icon moving toward its target
+    const t = this.age / this.duration;
+    const x = this.targetX + (W + 60 - this.targetX) * (1 - t);
+    const y = H - 54;
+    const pulse = 0.5 + 0.5 * Math.sin(this.age * 0.008);
+
+    // Wave body
+    ctx.fillStyle = 'rgba(74,122,140,0.85)';
+    ctx.strokeStyle = '#E8F0F4';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x - 28, y);
+    ctx.bezierCurveTo(x - 20, y - 14, x - 8, y - 18, x, y - 14);
+    ctx.bezierCurveTo(x + 8, y - 18, x + 20, y - 14, x + 28, y);
+    ctx.lineTo(x + 28, y + 8);
+    ctx.lineTo(x - 28, y + 8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Foam crest
+    ctx.fillStyle = '#E8F0F4';
+    ctx.beginPath();
+    ctx.arc(x - 12, y - 12, 4, 0, Math.PI * 2);
+    ctx.arc(x + 6, y - 16, 5, 0, Math.PI * 2);
+    ctx.arc(x + 20, y - 10, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Warning reticle on target
+    ctx.strokeStyle = `rgba(214,58,42,${0.5 + 0.4 * pulse})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(this.targetX, H - 68, 24, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Countdown bar under reticle
+    ctx.fillStyle = 'rgba(31,28,21,0.5)';
+    ctx.fillRect(this.targetX - 24, H - 38, 48, 4);
+    ctx.fillStyle = t > 0.75 ? '#D63A2A' : '#D4A84A';
+    ctx.fillRect(this.targetX - 24, H - 38, 48 * (1 - t), 4);
+  }
+}
+
+// Rain streaks (purely decorative)
+function spawnRain(count, windLevel) {
+  for (let i = 0; i < count; i++) {
+    state.rain.push({
+      x: Math.random() * (W + 100) - 50,
+      y: -10 - Math.random() * 30,
+      vx: -1.2 - windLevel * 0.8,
+      vy: 4 + Math.random() * 3 + windLevel * 1.5,
+      len: 8 + Math.random() * 12,
+      a: 0.25 + Math.random() * 0.35,
+    });
+  }
+}
+function updateRain(dt) {
+  const f = dt / 16;
+  for (let i = state.rain.length - 1; i >= 0; i--) {
+    const r = state.rain[i];
+    r.x += r.vx * f;
+    r.y += r.vy * f;
+    if (r.y > H + 10 || r.x < -20) state.rain.splice(i, 1);
+  }
+}
+function drawRain(ctx) {
+  ctx.strokeStyle = '#9FD1E8';
+  ctx.lineWidth = 1;
+  for (const r of state.rain) {
+    ctx.globalAlpha = r.a;
+    ctx.beginPath();
+    ctx.moveTo(r.x, r.y);
+    ctx.lineTo(r.x + r.vx * 2, r.y + r.vy * 2);
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+}
+
+/* ═══════════════════════════════════════════════════
+   Hurricane drawing — scene, buildings, pump-replacement
+═══════════════════════════════════════════════════ */
+function drawHurricaneSky(ctx) {
+  const phase = HURRICANE_PHASES[state.phase] || HURRICANE_PHASES[0];
+  const eyeOfStorm = state.phase === 2;
+
+  // Sky gets darker each phase
+  const skyIntensity = state.phase / 3;
+  const c1 = eyeOfStorm ? '#6A7280' : lerpColor('#5A7890', '#1A1F28', skyIntensity);
+  const c2 = eyeOfStorm ? '#4A5060' : lerpColor('#3A4558', '#0A0D14', skyIntensity);
+
+  const grd = ctx.createLinearGradient(0, 0, 0, H * 0.6);
+  grd.addColorStop(0, c1);
+  grd.addColorStop(1, c2);
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H * 0.6);
+
+  // Storm clouds — swirling dark masses
+  ctx.globalAlpha = 0.35 + skyIntensity * 0.3;
+  for (let i = 0; i < 8; i++) {
+    const t = performance.now() * 0.00005;
+    const cx = ((i * 180 + t * (50 + i * 20)) % (W + 200)) - 100;
+    const cy = 40 + (i % 3) * 35;
+    ctx.fillStyle = `rgb(${30 + i * 3}, ${32 + i * 3}, ${40 + i * 3})`;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 100, 30, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Lightning flash
+  if (state.lightningFlash > 0) {
+    ctx.fillStyle = `rgba(255,255,230,${state.lightningFlash * 0.4})`;
+    ctx.fillRect(0, 0, W, H);
+    // Lightning bolt
+    if (state.lightningFlash > 0.6) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      const lx = state.lightningX;
+      ctx.moveTo(lx, 0);
+      ctx.lineTo(lx + 20, 60);
+      ctx.lineTo(lx - 10, 120);
+      ctx.lineTo(lx + 15, 180);
+      ctx.lineTo(lx - 5, H * 0.4);
+      ctx.stroke();
+    }
+  }
+}
+
+function lerpColor(a, b, t) {
+  const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
+  const ar = (pa >> 16) & 255, ag = (pa >> 8) & 255, ab = pa & 255;
+  const br = (pb >> 16) & 255, bg = (pb >> 8) & 255, bb = pb & 255;
+  const r = Math.round(ar + (br - ar) * t);
+  const g = Math.round(ag + (bg - ag) * t);
+  const bl = Math.round(ab + (bb - ab) * t);
+  return `rgb(${r},${g},${bl})`;
+}
+
+function drawOcean(ctx) {
+  // Ocean takes the right ~35% of the middle strip, behind buildings
+  const waterY = H - 62 - state.waveLevel;
+  const oceanH = H - waterY;
+
+  // Water gradient
+  const og = ctx.createLinearGradient(0, waterY, 0, H);
+  og.addColorStop(0, '#4A7A8C');
+  og.addColorStop(0.4, '#2E5668');
+  og.addColorStop(1, '#1A3A48');
+  ctx.fillStyle = og;
+  ctx.fillRect(0, waterY, W, oceanH);
+
+  // Animated wave crests
+  ctx.strokeStyle = 'rgba(232,240,244,0.4)';
+  ctx.lineWidth = 1.5;
+  const t = performance.now() * 0.001;
+  for (let layer = 0; layer < 3; layer++) {
+    ctx.beginPath();
+    const amp = 3 + layer * 2 + state.waveLevel * 0.1;
+    const freq = 0.015 + layer * 0.005;
+    const yOff = waterY + 8 + layer * 14;
+    for (let x = 0; x <= W; x += 6) {
+      const y = yOff + Math.sin(x * freq + t + layer) * amp;
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.globalAlpha = 0.5 - layer * 0.15;
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+
+  // Foam line
+  ctx.fillStyle = 'rgba(232,240,244,0.8)';
+  ctx.beginPath();
+  for (let x = 0; x <= W; x += 4) {
+    const y = waterY + Math.sin(x * 0.02 + t * 2) * 2;
+    if (x === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.lineTo(W, waterY + 3);
+  ctx.lineTo(0, waterY + 3);
+  ctx.closePath();
+  ctx.fill();
+
+  // Sand/beach strip
+  const sandY = H - 58;
+  const sandG = ctx.createLinearGradient(0, sandY - 4, 0, sandY + 10);
+  sandG.addColorStop(0, '#D9C8A0');
+  sandG.addColorStop(1, '#A8966B');
+  ctx.fillStyle = sandG;
+  ctx.fillRect(0, sandY, W, 10);
+}
+
+function drawBoardwalk(ctx) {
+  const y = H - 48;
+  // Boardwalk planks
+  ctx.fillStyle = '#8B6F4A';
+  ctx.fillRect(0, y, W, 14);
+
+  // Plank lines
+  ctx.strokeStyle = '#5A4630';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 22) {
+    ctx.beginPath();
+    ctx.moveTo(x, y); ctx.lineTo(x, y + 14);
+    ctx.stroke();
+  }
+  // Grain
+  ctx.strokeStyle = 'rgba(90,70,48,0.5)';
+  for (let gx = 4; gx < W; gx += 33) {
+    ctx.beginPath();
+    ctx.moveTo(gx, y + 4); ctx.lineTo(gx + 16, y + 4);
+    ctx.stroke();
+  }
+
+  // Railing posts
+  ctx.fillStyle = '#3A3426';
+  for (let x = 10; x < W; x += 60) {
+    ctx.fillRect(x, y - 8, 3, 8);
+  }
+}
+
+function drawHurricaneBuilding(ctx, b) {
+  const x = b.x, baseY = b.y;
+  const w = b.w, h = b.h;
+
+  if (b.destroyed) {
+    // Destroyed: rubble pile
+    ctx.fillStyle = '#2A2218';
+    ctx.beginPath();
+    ctx.moveTo(x - w/2, baseY);
+    ctx.lineTo(x - w/3, baseY - 12);
+    ctx.lineTo(x - w/6, baseY - 6);
+    ctx.lineTo(x, baseY - 14);
+    ctx.lineTo(x + w/6, baseY - 4);
+    ctx.lineTo(x + w/3, baseY - 10);
+    ctx.lineTo(x + w/2, baseY);
+    ctx.closePath();
+    ctx.fill();
+    // Total loss placard
+    ctx.fillStyle = 'rgba(122,31,40,0.9)';
+    ctx.fillRect(x - 22, baseY - 30, 44, 13);
+    ctx.strokeStyle = '#1F1C15';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x - 22, baseY - 30, 44, 13);
+    ctx.font = "italic 9px 'IM Fell English', serif";
+    ctx.fillStyle = '#F1E7CD';
+    ctx.textAlign = 'center';
+    ctx.fillText('TOTAL LOSS', x, baseY - 21);
+    return;
+  }
+
+  // Main body silhouette based on style
+  ctx.save();
+
+  switch (b.style) {
+    case 'pier': {
+      // Long building extending right on pilings into ocean
+      ctx.fillStyle = '#E8DBB7';
+      ctx.fillRect(x - w/2, baseY - h * 0.55, w, h * 0.55);
+      // Arched ornate roof
+      ctx.fillStyle = '#7A1F28';
+      ctx.beginPath();
+      ctx.moveTo(x - w/2 - 6, baseY - h * 0.55);
+      ctx.lineTo(x + w/2 + 6, baseY - h * 0.55);
+      ctx.lineTo(x + w/2 + 6, baseY - h * 0.62);
+      // Arches
+      for (let i = -3; i <= 3; i++) {
+        const ax = x + (i * w * 0.13);
+        ctx.lineTo(ax + w * 0.04, baseY - h * 0.62);
+        ctx.quadraticCurveTo(ax + w * 0.065, baseY - h * 0.95, ax + w * 0.09, baseY - h * 0.62);
+      }
+      ctx.lineTo(x + w/2 + 6, baseY - h * 0.62);
+      ctx.lineTo(x + w/2 + 6, baseY - h * 0.68);
+      ctx.lineTo(x - w/2 - 6, baseY - h * 0.68);
+      ctx.closePath();
+      ctx.fill();
+      // Center dome
+      ctx.fillStyle = '#D4A84A';
+      ctx.beginPath();
+      ctx.arc(x, baseY - h * 0.88, w * 0.12, Math.PI, 0);
+      ctx.closePath();
+      ctx.fill();
+      // Pilings into water
+      ctx.fillStyle = '#5A4630';
+      for (let i = -2; i <= 2; i++) {
+        ctx.fillRect(x + i * 16 - 2, baseY, 4, 14);
+      }
+      break;
+    }
+    case 'hotel': {
+      // Grand multi-story hotel
+      ctx.fillStyle = '#F1E7CD';
+      ctx.fillRect(x - w/2, baseY - h, w, h);
+      // Windows in grid — warm glow when still occupied
+      ctx.fillStyle = 'rgba(244,170,60,0.55)';
+      for (let row = 1; row < 5; row++) {
+        for (let col = 0; col < 5; col++) {
+          const wx = x - w/2 + 10 + col * (w - 20) / 4;
+          const wy = baseY - h + 12 + row * (h / 5);
+          ctx.fillRect(wx - 3, wy - 4, 6, 8);
+        }
+      }
+      // Roof line
+      ctx.fillStyle = '#7A1F28';
+      ctx.fillRect(x - w/2 - 4, baseY - h - 4, w + 8, 6);
+      // Central spire
+      ctx.fillStyle = '#D4A84A';
+      ctx.beginPath();
+      ctx.moveTo(x - 6, baseY - h - 4);
+      ctx.lineTo(x + 6, baseY - h - 4);
+      ctx.lineTo(x, baseY - h - 18);
+      ctx.closePath();
+      ctx.fill();
+      break;
+    }
+    case 'ferris': {
+      // Small building at base + ferris wheel above
+      ctx.fillStyle = '#E8DBB7';
+      ctx.fillRect(x - w/2, baseY - h * 0.35, w, h * 0.35);
+      // Ferris wheel
+      const fx = x, fy = baseY - h * 0.72;
+      const fr = h * 0.4;
+      ctx.strokeStyle = '#D4A84A';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(fx, fy, fr, 0, Math.PI * 2);
+      ctx.stroke();
+      // Spokes
+      ctx.lineWidth = 1.5;
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2 + performance.now() * 0.0002;
+        ctx.beginPath();
+        ctx.moveTo(fx, fy);
+        ctx.lineTo(fx + Math.cos(a) * fr, fy + Math.sin(a) * fr);
+        ctx.stroke();
+      }
+      // Cabins
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2 + performance.now() * 0.0002;
+        const cx = fx + Math.cos(a) * fr, cy = fy + Math.sin(a) * fr;
+        ctx.fillStyle = i % 2 === 0 ? '#D63A2A' : '#4A7A8C';
+        ctx.fillRect(cx - 3, cy - 3, 6, 6);
+      }
+      // Hub
+      ctx.fillStyle = '#1F1C15';
+      ctx.beginPath();
+      ctx.arc(fx, fy, 4, 0, Math.PI * 2);
+      ctx.fill();
+      // Support legs
+      ctx.strokeStyle = '#D4A84A';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(fx - fr * 0.7, fy + fr * 0.7);
+      ctx.lineTo(fx, fy);
+      ctx.lineTo(fx + fr * 0.7, fy + fr * 0.7);
+      ctx.stroke();
+      break;
+    }
+    case 'chapel': {
+      // Tabernacle — wide church with peaked roof
+      ctx.fillStyle = '#E8DBB7';
+      ctx.fillRect(x - w/2, baseY - h * 0.7, w, h * 0.7);
+      // Peaked roof
+      ctx.fillStyle = '#5A4630';
+      ctx.beginPath();
+      ctx.moveTo(x - w/2 - 4, baseY - h * 0.7);
+      ctx.lineTo(x + w/2 + 4, baseY - h * 0.7);
+      ctx.lineTo(x, baseY - h);
+      ctx.closePath();
+      ctx.fill();
+      // Cross on top
+      ctx.fillStyle = '#1F1C15';
+      ctx.fillRect(x - 1, baseY - h - 8, 2, 10);
+      ctx.fillRect(x - 4, baseY - h - 5, 8, 2);
+      // Arched door
+      ctx.fillStyle = '#3A3426';
+      ctx.beginPath();
+      ctx.moveTo(x - 10, baseY);
+      ctx.lineTo(x - 10, baseY - 20);
+      ctx.quadraticCurveTo(x, baseY - 30, x + 10, baseY - 20);
+      ctx.lineTo(x + 10, baseY);
+      ctx.closePath();
+      ctx.fill();
+      // Side windows
+      ctx.fillStyle = 'rgba(244,170,60,0.55)';
+      for (let i = -1; i <= 1; i += 2) {
+        ctx.fillRect(x + i * w * 0.3 - 5, baseY - h * 0.5, 10, 16);
+      }
+      break;
+    }
+    case 'awning': {
+      // Boardwalk shop with striped awning
+      ctx.fillStyle = '#F1E7CD';
+      ctx.fillRect(x - w/2, baseY - h * 0.75, w, h * 0.75);
+      // Roof
+      ctx.fillStyle = '#3A3426';
+      ctx.fillRect(x - w/2 - 3, baseY - h * 0.8, w + 6, h * 0.08);
+      // Striped awning
+      const stripes = 6;
+      const aw = w * 0.95;
+      for (let i = 0; i < stripes; i++) {
+        ctx.fillStyle = i % 2 === 0 ? '#D63A2A' : '#F1E7CD';
+        ctx.fillRect(x - aw/2 + (aw/stripes) * i, baseY - h * 0.55, aw/stripes, 8);
+      }
+      // Awning scallops
+      ctx.fillStyle = '#D63A2A';
+      ctx.beginPath();
+      for (let i = 0; i < stripes; i++) {
+        const sx = x - aw/2 + (aw/stripes) * i;
+        ctx.moveTo(sx, baseY - h * 0.55 + 8);
+        ctx.quadraticCurveTo(sx + aw/stripes/2, baseY - h * 0.55 + 14, sx + aw/stripes, baseY - h * 0.55 + 8);
+      }
+      ctx.fill();
+      // Window
+      ctx.fillStyle = 'rgba(244,170,60,0.45)';
+      ctx.fillRect(x - w * 0.3, baseY - h * 0.35, w * 0.6, h * 0.2);
+      ctx.strokeStyle = '#3A3426';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x - w * 0.3, baseY - h * 0.35, w * 0.6, h * 0.2);
+      // Door
+      ctx.fillStyle = '#3A3426';
+      ctx.fillRect(x - 6, baseY - 18, 12, 18);
+      break;
+    }
+    default: {
+      // Victorian storefront (Shriver's etc.)
+      ctx.fillStyle = '#E8DBB7';
+      ctx.fillRect(x - w/2, baseY - h, w, h);
+      // Decorative cornice
+      ctx.fillStyle = '#D4A84A';
+      ctx.fillRect(x - w/2 - 3, baseY - h, w + 6, 5);
+      // Sign band
+      ctx.fillStyle = '#7A1F28';
+      ctx.fillRect(x - w/2, baseY - h + 5, w, 10);
+      // Big window
+      ctx.fillStyle = 'rgba(244,170,60,0.45)';
+      ctx.fillRect(x - w * 0.35, baseY - h * 0.55, w * 0.7, h * 0.35);
+      ctx.strokeStyle = '#3A3426';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x - w * 0.35, baseY - h * 0.55, w * 0.7, h * 0.35);
+      // Door
+      ctx.fillStyle = '#3A3426';
+      ctx.fillRect(x - 7, baseY - 20, 14, 20);
+    }
+  }
+
+  // Draw prep overlays
+  // Prep stage 1+: Boarded windows (X pattern over building)
+  if (b.prep >= 1) {
+    ctx.strokeStyle = '#8B6F4A';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    const pad = 4;
+    // Diagonal boards across upper half
+    ctx.beginPath();
+    ctx.moveTo(x - w/2 + pad, baseY - h * 0.3);
+    ctx.lineTo(x + w/2 - pad, baseY - h * 0.75);
+    ctx.moveTo(x - w/2 + pad, baseY - h * 0.75);
+    ctx.lineTo(x + w/2 - pad, baseY - h * 0.3);
+    ctx.stroke();
+  }
+  // Prep stage 2+: Sandbags at base
+  if (b.prep >= 2) {
+    ctx.fillStyle = '#D9C8A0';
+    ctx.strokeStyle = '#A8966B';
+    ctx.lineWidth = 1;
+    for (let i = -3; i <= 3; i++) {
+      const sx = x + i * 10;
+      ctx.beginPath();
+      ctx.ellipse(sx, baseY - 2, 6, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+    for (let i = -2; i <= 2; i++) {
+      const sx = x + i * 10 + 5;
+      ctx.beginPath();
+      ctx.ellipse(sx, baseY - 8, 6, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+  }
+  // Prep stage 3: "EVACUATED" placard
+  if (b.prep >= 3) {
+    ctx.fillStyle = '#1F1C15';
+    ctx.fillRect(x - 28, baseY - h - 18, 56, 14);
+    ctx.strokeStyle = '#D4A84A';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x - 28, baseY - h - 18, 56, 14);
+    ctx.font = "bold 9px 'IM Fell English SC', serif";
+    ctx.fillStyle = '#D4A84A';
+    ctx.textAlign = 'center';
+    ctx.fillText('EVACUATED', x, baseY - h - 8);
+  }
+
+  ctx.restore();
+
+  // Prep indicator above building — 3 dots showing readiness
+  const pipY = baseY - h - 5;
+  const pipSize = 4;
+  const pipGap = 3;
+  const totalW = 3 * pipSize + 2 * pipGap;
+  for (let i = 0; i < 3; i++) {
+    const filled = i < (b.prep || 0);
+    ctx.fillStyle = filled ? '#4AC95F' : 'rgba(241,231,205,0.25)';
+    ctx.beginPath();
+    ctx.arc(x - totalW / 2 + i * (pipSize + pipGap) + pipSize / 2, pipY, pipSize / 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#1F1C15';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Nameplate
+  ctx.font = "italic 10px 'IM Fell English', serif";
+  ctx.fillStyle = 'rgba(241,231,205,0.75)';
+  ctx.textAlign = 'center';
+  ctx.fillText(b.name, x, baseY + 22);
+}
+
+/* ═══════════════════════════════════════════════════
    Scene drawing
 ═══════════════════════════════════════════════════ */
 function drawSky(ctx) {
@@ -1914,15 +2861,52 @@ function startGame() {
   state.spawnInterval = 4500;
   state.growthInterval = 3600;
   state.lastTime = 0;
+  // Hurricane state
+  state.phase = -1;
+  state.phaseTimer = 0;
+  state.debris = [];
+  state.surges = [];
+  state.rain = [];
+  state.debrisDeflected = 0;
+  state.debrisLanded = 0;
+  state.prepActions = 0;
+  state.lightningFlash = 0;
+  state.lightningX = 0;
+  state.waveLevel = 0;
+  state.surgeTimer = 0;
+  state.debrisTimer = 0;
+
+  // Apply mode-specific masthead/footer
+  applyModeChrome();
 
   layoutWorld();
-  advanceWave();
+  if (state.mode === 'hurricane') {
+    advanceHurricanePhase();
+  } else {
+    advanceWave();
+  }
   updateHUD();
 
   document.getElementById('startScreen').classList.add('hidden');
   document.getElementById('endScreen').classList.add('hidden');
+  document.getElementById('titleScreen').classList.add('hidden');
 
   requestAnimationFrame(tick);
+}
+
+function applyModeChrome() {
+  const isHurricane = state.mode === 'hurricane';
+  document.getElementById('marqueeMode').textContent = isHurricane ? 'Hurricane Watch' : 'Fire Brigade';
+  document.getElementById('marqueeLocation').textContent = isHurricane ? 'Ocean City, N.J.' : 'Bridgeton, N.J.';
+  document.getElementById('marqueeDivision').textContent = isHurricane ? 'Coastal Peril Division' : 'Policy & Peril Division';
+  document.getElementById('footerText').textContent = isHurricane
+    ? 'A mutual assurance society against loss by wind and water — offered in good faith to the insured.'
+    : 'A mutual assurance society against loss by fire — offered in good faith to the insured.';
+  // Arena background class for subtle theming
+  const arena = document.querySelector('.arena-wrap');
+  if (arena) {
+    arena.classList.toggle('hurricane-mode', isHurricane);
+  }
 }
 
 function advanceWave() {
@@ -1953,6 +2937,40 @@ function advanceWave() {
   document.getElementById('waveDisplay').textContent = toRoman(state.wave) + ' / ' + toRoman(VICTORY_WAVE);
 }
 
+function advanceHurricanePhase() {
+  state.phase++;
+  state.phaseTimer = 0;
+  state.surgeTimer = 0;
+  state.debrisTimer = 2000; // initial grace period
+
+  if (state.phase >= HURRICANE_PHASES.length) {
+    endGame(true);
+    return;
+  }
+
+  const phase = HURRICANE_PHASES[state.phase];
+  const phaseLabels = ['I', 'II', 'Eye', 'III'];
+  const phaseTitles = [
+    'Tropical Advisory — prepare now',
+    'Landfall Imminent — debris inbound',
+    'The Eye Passes — brief calm',
+    'Backside Fury — hold the line'
+  ];
+  banner(phaseLabels[state.phase] || '?', phaseTitles[state.phase] || 'The Reckoning');
+
+  if (state.phase === 1) {
+    setTimeout(() => flash('Cat III winds building — debris inbound from the east', 'bad'), 900);
+  }
+  if (state.phase === 2) {
+    setTimeout(() => flash('The eye is overhead — use this calm to finish prepping', 'good'), 900);
+  }
+  if (state.phase === 3) {
+    setTimeout(() => flash('Backside winds exceed 120 mph — brace for impact', 'bad'), 900);
+  }
+
+  document.getElementById('waveDisplay').textContent = phaseLabels[state.phase] + ' / III';
+}
+
 function spawnFire() {
   const candidates = state.buildings.filter(b => !b.destroyed && !state.fires.some(f => f.building.id === b.id));
   if (candidates.length === 0) return;
@@ -1969,51 +2987,73 @@ function spawnFire() {
 function endGame(victory) {
   state.running = false;
   state.ended = true;
+  const isHurricane = state.mode === 'hurricane';
 
   // Final dramatic telegram from Guy Carpenter — clear the stack first
   // so this one gets its moment in the spotlight
   clearTelegrams();
   if (victory) {
-    showTelegram(
-      "DAWN HAS BROKEN STOP LEDGER HELD BELOW RETENTION STOP " +
-      "SWISS RE SENDS THEIR REGARDS AND A FRUIT BASKET STOP " +
-      "TREATY RENEWS AT NORMAL TERMS STOP CONGRATULATIONS STOP"
+    showTelegram(isHurricane
+      ? "Storm has passed. Boardwalk mostly intact. Ledger held below retention. Swiss Re sends a taffy basket. Treaty renews at normal terms. Congratulations."
+      : "Dawn has broken. Ledger held below retention. Swiss Re sends their regards and a fruit basket. Treaty renews at normal terms. Congratulations."
     );
   } else {
-    showTelegram(
-      "TREATY TRIGGERED AT 750K STOP DRAFTING LOSS NOTICE NOW STOP " +
-      "REINSURERS ASKING WHAT EXACTLY HAPPENED IN BRIDGETON STOP " +
-      "I AM TELLING THEM IT WAS METEORS STOP THEY ARE NOT LAUGHING STOP " +
-      "SEE YOU AT JUNE RENEWALS STOP GODSPEED STOP",
+    showTelegram(isHurricane
+      ? "Treaty triggered at 15 million. Drafting loss notice now. Reinsurers asking why a Ferris wheel is in the ocean. I told them it was a Cat III. They said so is their mood. See you at June renewals. Godspeed."
+      : "Treaty triggered at 15 million. Drafting loss notice now. Reinsurers asking what exactly happened in Bridgeton. I am telling them it was meteors. They are not laughing. See you at June renewals. Godspeed.",
       { urgent: true }
     );
   }
 
-  const title = victory ? 'Company Preserved' : 'Retention Breached';
-  const subtitle = victory ? 'The dawn bells ring — ledger holds' : 'Reinsurance has been triggered';
-  const msg = victory
-    ? `Dawn broke before the retention did. The Brigade extinguished ${state.firesExtinguished} fires and held the ledger at ${fmt(state.claims)} — well within the $750,000 attachment. The reinsurers remain untroubled.`
-    : `Losses have exceeded the $750,000 attachment. The treaty reinsurers must now bear the excess, and the underwriters shall have a difficult conversation in the morning.`;
+  let title, subtitle, msg;
+  if (isHurricane) {
+    title = victory ? 'Storm Weathered' : 'Retention Breached';
+    subtitle = victory ? 'Ocean City endures — ledger holds' : 'Reinsurance has been triggered';
+    msg = victory
+      ? `The storm has passed. The Brigade prepped ${state.prepActions} landmarks and deflected ${state.debrisDeflected} pieces of airborne debris. Losses held at ${fmt(state.claims)} — below the $15,000,000 attachment. The Boardwalk will reopen by Memorial Day.`
+      : `Losses from wind and surge have exceeded the $15,000,000 attachment. The treaty reinsurers must now bear the excess, and somewhere in Zurich an actuary is updating their Atlantic hurricane PML model.`;
+  } else {
+    title = victory ? 'Company Preserved' : 'Retention Breached';
+    subtitle = victory ? 'The dawn bells ring — ledger holds' : 'Reinsurance has been triggered';
+    msg = victory
+      ? `Dawn broke before the retention did. The Brigade extinguished ${state.firesExtinguished} fires and held the ledger at ${fmt(state.claims)} — well within the $15,000,000 attachment. The reinsurers remain untroubled.`
+      : `Losses have exceeded the $15,000,000 attachment. The treaty reinsurers must now bear the excess, and the underwriters shall have a difficult conversation in the morning.`;
+  }
 
   document.getElementById('endTitle').textContent = title;
   document.getElementById('endSubtitle').textContent = subtitle;
   document.getElementById('endMessage').textContent = msg;
 
   const ledger = document.getElementById('finalLedger');
-  const accuracy = state.totalSprays > 0
-    ? Math.round((state.firesExtinguished / Math.max(1, state.firesExtinguished + state.propertiesLost)) * 100)
-    : 0;
-  const meteorRows = (state.meteorsShotDown + state.meteorsLanded) > 0
-    ? `<div><span>Meteors Intercepted</span><span>${state.meteorsShotDown} of ${state.meteorsShotDown + state.meteorsLanded}</span></div>`
-    : '';
-  ledger.innerHTML = `
-    <div><span>Alarms Endured</span><span>${toRoman(Math.min(state.wave, VICTORY_WAVE))} of ${toRoman(VICTORY_WAVE)}</span></div>
-    <div><span>Fires Extinguished</span><span>${state.firesExtinguished}</span></div>
-    <div><span>Properties Lost</span><span>${state.propertiesLost}</span></div>
-    ${meteorRows}
-    <div><span>Save Rate</span><span>${accuracy}%</span></div>
-    <div><span>Total Claims Paid</span><span>${fmt(state.claims)}</span></div>
-  `;
+  if (isHurricane) {
+    const phaseLabel = ['I','II','Eye','III'][Math.min(state.phase, 3)] || 'III';
+    const deflectRate = (state.debrisDeflected + state.debrisLanded) > 0
+      ? Math.round((state.debrisDeflected / (state.debrisDeflected + state.debrisLanded)) * 100)
+      : 0;
+    ledger.innerHTML = `
+      <div><span>Phase Reached</span><span>${phaseLabel} of III</span></div>
+      <div><span>Prep Actions Taken</span><span>${state.prepActions}</span></div>
+      <div><span>Debris Deflected</span><span>${state.debrisDeflected} of ${state.debrisDeflected + state.debrisLanded}</span></div>
+      <div><span>Deflection Rate</span><span>${deflectRate}%</span></div>
+      <div><span>Properties Lost</span><span>${state.propertiesLost}</span></div>
+      <div><span>Total Claims Paid</span><span>${fmt(state.claims)}</span></div>
+    `;
+  } else {
+    const accuracy = state.totalSprays > 0
+      ? Math.round((state.firesExtinguished / Math.max(1, state.firesExtinguished + state.propertiesLost)) * 100)
+      : 0;
+    const meteorRows = (state.meteorsShotDown + state.meteorsLanded) > 0
+      ? `<div><span>Meteors Intercepted</span><span>${state.meteorsShotDown} of ${state.meteorsShotDown + state.meteorsLanded}</span></div>`
+      : '';
+    ledger.innerHTML = `
+      <div><span>Alarms Endured</span><span>${toRoman(Math.min(state.wave, VICTORY_WAVE))} of ${toRoman(VICTORY_WAVE)}</span></div>
+      <div><span>Fires Extinguished</span><span>${state.firesExtinguished}</span></div>
+      <div><span>Properties Lost</span><span>${state.propertiesLost}</span></div>
+      ${meteorRows}
+      <div><span>Save Rate</span><span>${accuracy}%</span></div>
+      <div><span>Total Claims Paid</span><span>${fmt(state.claims)}</span></div>
+    `;
+  }
 
   // Give the player a beat to read the final telegram before the card appears
   setTimeout(() => {
@@ -2032,7 +3072,141 @@ function tick(now) {
   requestAnimationFrame(tick);
 }
 
+function updateHurricane(dt) {
+  const phase = HURRICANE_PHASES[state.phase] || HURRICANE_PHASES[0];
+  state.phaseTimer += dt;
+  state.debrisTimer += dt;
+  state.surgeTimer += dt;
+
+  // Target storm surge water level by phase (pixels of rise)
+  const targetWaveLevel = [0, 18, 12, 40][state.phase] || 0;
+  state.waveLevel += (targetWaveLevel - state.waveLevel) * 0.01;
+
+  // Lightning flash decay + occasional strikes during Landfall/Backside
+  state.lightningFlash = Math.max(0, state.lightningFlash - dt * 0.002);
+  if ((state.phase === 1 || state.phase === 3) && Math.random() < 0.0008) {
+    state.lightningFlash = 1;
+    state.lightningX = rand(50, W - 50);
+  }
+
+  // Rain — density by phase
+  const rainDensity = [0, 2, 0, 4][state.phase] || 0;
+  if (rainDensity > 0 && state.rain.length < 200) {
+    spawnRain(rainDensity, phase.windLevel);
+  }
+  updateRain(dt);
+
+  // Spawn debris based on phase rate
+  if (state.debrisTimer >= phase.debrisRate) {
+    state.debrisTimer = 0;
+    state.debris.push(new Debris(phase.windLevel));
+    if (state.phase === 3 && Math.random() < 0.4) {
+      setTimeout(() => {
+        if (state.running) state.debris.push(new Debris(phase.windLevel));
+      }, 700);
+    }
+  }
+
+  // Spawn surges
+  if (state.surgeTimer >= phase.surgeRate && state.buildings.some(b => !b.destroyed)) {
+    state.surgeTimer = 0;
+    state.surges.push(new Surge());
+  }
+
+  // Update debris
+  for (let i = state.debris.length - 1; i >= 0; i--) {
+    const d = state.debris[i];
+    d.update(dt);
+    if (!d.active) {
+      if (d.landed && d.hitBuilding) {
+        state.debrisLanded++;
+        const b = d.hitBuilding;
+        // Damage scales inversely with prep (boards = prep 1+ defends)
+        const damageByPrep = [440000, 180000, 80000, 30000];
+        const dmg = damageByPrep[b.prep || 0];
+        state.claims += dmg;
+        state.flashes.push(new ImpactFlash(d.x, d.y, '#D4A84A'));
+        state.popups.push(new Popup(b.x, b.y - b.h - 10, '−' + fmt(dmg), b.prep >= 1 ? '#FFD54F' : '#FF8577'));
+        const prepNote = b.prep >= 1 ? 'boards held' : 'windows shattered';
+        flash(`Debris strike · ${b.name} · ${prepNote} · ${fmt(dmg)}`, b.prep >= 1 ? '' : 'bad');
+        if (b.prep < 1) shakeMeter();
+        // If heavily damaged and unprepped, building may be destroyed
+        if (b.prep === 0 && Math.random() < 0.35) {
+          destroyBuilding(b, 'debris');
+        }
+      } else if (d.offscreen) {
+        // Deflected or missed — no damage
+      }
+      state.debris.splice(i, 1);
+      updateHUD();
+      if (state.claims >= RETENTION) { endGame(false); return; }
+    }
+  }
+
+  // Update surges
+  for (let i = state.surges.length - 1; i >= 0; i--) {
+    const s = state.surges[i];
+    s.update(dt);
+    if (!s.active) {
+      if (s.landed && !s.intercepted) {
+        const b = state.buildings[s.targetIndex];
+        if (b && !b.destroyed) {
+          // Surge damage: sandbags (prep 2+) are the main defense
+          const damageByPrep = [900000, 700000, 120000, 50000];
+          const dmg = damageByPrep[b.prep || 0];
+          state.claims += dmg;
+          state.flashes.push(new ImpactFlash(b.x, b.y - 4, '#9FD1E8'));
+          state.popups.push(new Popup(b.x, b.y - b.h - 10, '−' + fmt(dmg), b.prep >= 2 ? '#9FD1E8' : '#FF8577'));
+          const note = b.prep >= 2 ? 'sandbags held' : 'flooding';
+          flash(`Surge impact · ${b.name} · ${note} · ${fmt(dmg)}`, b.prep >= 2 ? '' : 'bad');
+          if (b.prep < 2) {
+            shakeMeter();
+            if (Math.random() < 0.45) destroyBuilding(b, 'surge');
+          }
+        }
+      }
+      state.surges.splice(i, 1);
+      updateHUD();
+      if (state.claims >= RETENTION) { endGame(false); return; }
+    }
+  }
+
+  // Phase advance
+  if (state.phaseTimer >= phase.duration) {
+    advanceHurricanePhase();
+  }
+
+  // Update popups + flashes (shared with fire mode)
+  for (let i = state.popups.length - 1; i >= 0; i--) {
+    if (!state.popups[i].update(dt)) state.popups.splice(i, 1);
+  }
+  for (let i = state.flashes.length - 1; i >= 0; i--) {
+    if (!state.flashes[i].update(dt)) state.flashes.splice(i, 1);
+  }
+
+  // Out of buildings?
+  if (state.buildings.every(b => b.destroyed)) {
+    endGame(false);
+  }
+}
+
+function destroyBuilding(b, cause) {
+  if (b.destroyed) return;
+  b.destroyed = true;
+  state.propertiesLost++;
+  const remainder = Math.round(b.value * 0.6); // additional total-loss cost
+  state.claims += remainder;
+  state.popups.push(new Popup(b.x, b.y - b.h - 26, 'TOTAL LOSS −' + fmt(remainder), '#FF8577'));
+  flash(`Total loss · ${b.name} · ${fmt(remainder)} additional`, 'bad');
+  shakeMeter();
+}
+
 function update(dt) {
+  if (state.mode === 'hurricane') {
+    updateHurricane(dt);
+    return;
+  }
+
   state.pumpBob += dt * 0.003;
   state.pumpRecoil = Math.max(0, state.pumpRecoil - dt * 0.006);
 
@@ -2083,7 +3257,7 @@ function update(dt) {
         if (impact.hitBuilding) {
           const b = impact.building;
           // Immediate debris claim
-          const debris = 25000;
+          const debris = 500000;
           state.claims += debris;
           state.popups.push(new Popup(b.x, b.y - b.h - 10, '−' + fmt(debris), '#FF8577'));
           flash(`Meteor strike · ${b.name} · ${fmt(debris)} debris`, 'bad');
@@ -2103,7 +3277,7 @@ function update(dt) {
           }
         } else {
           // Crater in the street — small debris claim
-          const debris = 4000;
+          const debris = 80000;
           state.claims += debris;
           state.popups.push(new Popup(m.x, m.y - 10, '−' + fmt(debris), '#F4823C'));
           flash(`Meteor crater · street debris · ${fmt(debris)}`, '');
@@ -2183,6 +3357,11 @@ function update(dt) {
 function render() {
   ctx.clearRect(0, 0, W, H);
 
+  if (state.mode === 'hurricane') {
+    renderHurricane();
+    return;
+  }
+
   drawSky(ctx);
   drawGround(ctx);
 
@@ -2218,6 +3397,43 @@ function render() {
   ctx.fillRect(0, 0, W, H);
 }
 
+function renderHurricane() {
+  // Sky + clouds + lightning
+  drawHurricaneSky(ctx);
+
+  // Ocean + waves + storm surge
+  drawOcean(ctx);
+
+  // Boardwalk
+  drawBoardwalk(ctx);
+
+  // Buildings
+  for (const b of state.buildings) drawHurricaneBuilding(ctx, b);
+
+  // Rain (drawn in front of buildings, angled by wind)
+  drawRain(ctx);
+
+  // Debris (flying across)
+  for (const d of state.debris) d.draw(ctx);
+
+  // Incoming surges
+  for (const s of state.surges) s.draw(ctx);
+
+  // Impact flashes
+  for (const f of state.flashes) f.draw(ctx);
+
+  // Popups (claim displays)
+  for (const p of state.popups) p.draw(ctx);
+
+  // Phase-based vignette — darker during peak storm
+  const vigIntensity = state.phase === 1 ? 0.35 : state.phase === 3 ? 0.55 : 0.25;
+  const grd = ctx.createRadialGradient(W/2, H/2, Math.min(W, H) * 0.4, W/2, H/2, Math.max(W, H) * 0.75);
+  grd.addColorStop(0, 'rgba(0,0,0,0)');
+  grd.addColorStop(1, `rgba(0,0,0,${vigIntensity})`);
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+}
+
 function updateHUD() {
   document.getElementById('claimsPaid').textContent = fmt(state.claims);
   const pct = Math.min(100, (state.claims / RETENTION) * 100);
@@ -2244,10 +3460,95 @@ function getCanvasPoint(e) {
   return { x: cx, y: cy };
 }
 
+function handleHurricaneClick(p) {
+  // Priority 1: Flying debris (tap to deflect)
+  let hitDebris = null;
+  let bestDebris = Infinity;
+  for (const d of state.debris) {
+    if (!d.active) continue;
+    const dx = d.x - p.x, dy = d.y - p.y;
+    const d2 = dx * dx + dy * dy;
+    const r = d.size + 22;
+    if (d2 < r * r && d2 < bestDebris) { bestDebris = d2; hitDebris = d; }
+  }
+
+  if (hitDebris) {
+    // Deflect it: kill it and spawn a burst
+    hitDebris.active = false;
+    hitDebris.offscreen = true;
+    state.debrisDeflected++;
+    state.flashes.push(new ImpactFlash(hitDebris.x, hitDebris.y, '#FFD54F'));
+    state.popups.push(new Popup(hitDebris.x, hitDebris.y, 'DEFLECTED', '#FFD54F'));
+    flash('Debris deflected — strike averted', 'good');
+    return;
+  }
+
+  // Priority 2: Incoming surges (tap to dispatch crew)
+  let hitSurge = null;
+  let bestSurge = Infinity;
+  for (const s of state.surges) {
+    if (!s.active) continue;
+    // Surge is clickable both at its reticle (on the target building) and its traveling wave
+    const t = s.age / s.duration;
+    const waveX = s.targetX + (W + 60 - s.targetX) * (1 - t);
+    const waveY = H - 54;
+
+    // Check wave bounds
+    const dx1 = waveX - p.x, dy1 = waveY - p.y;
+    if (dx1 * dx1 + dy1 * dy1 < 36 * 36) {
+      hitSurge = s; break;
+    }
+    // Check reticle bounds (target)
+    const dx2 = s.targetX - p.x, dy2 = (H - 68) - p.y;
+    const d2 = dx2 * dx2 + dy2 * dy2;
+    if (d2 < 32 * 32 && d2 < bestSurge) { bestSurge = d2; hitSurge = s; }
+  }
+
+  if (hitSurge) {
+    hitSurge.active = false;
+    hitSurge.intercepted = true;
+    state.flashes.push(new ImpactFlash(hitSurge.targetX, H - 68, '#9FD1E8'));
+    state.popups.push(new Popup(hitSurge.targetX, H - 80, 'CREW DISPATCHED', '#9FD1E8'));
+    flash('Dune crew reinforced the surge line', 'good');
+    return;
+  }
+
+  // Priority 3: Building click — cycle prep level
+  let hitBuilding = null;
+  let bestBuildingD = Infinity;
+  for (const b of state.buildings) {
+    if (b.destroyed) continue;
+    const dx = b.x - p.x;
+    const dy = (b.y - b.h / 2) - p.y;
+    if (Math.abs(dx) < b.w / 2 + 10 && Math.abs(dy) < b.h / 2 + 10) {
+      const d2 = dx * dx + dy * dy;
+      if (d2 < bestBuildingD) { bestBuildingD = d2; hitBuilding = b; }
+    }
+  }
+
+  if (hitBuilding) {
+    if (hitBuilding.prep >= 3) {
+      state.popups.push(new Popup(hitBuilding.x, hitBuilding.y - hitBuilding.h - 15, 'FULLY PREPPED', '#4AC95F'));
+      return;
+    }
+    hitBuilding.prep++;
+    state.prepActions++;
+    const labels = ['', 'BOARDS UP', 'SANDBAGS PLACED', 'EVACUATED'];
+    state.popups.push(new Popup(hitBuilding.x, hitBuilding.y - hitBuilding.h - 15, labels[hitBuilding.prep], '#4AC95F'));
+    state.flashes.push(new ImpactFlash(hitBuilding.x, hitBuilding.y - hitBuilding.h / 2, '#4AC95F'));
+    flash(`${hitBuilding.name} · ${labels[hitBuilding.prep].toLowerCase()}`, 'good');
+  }
+}
+
 function handleClick(e) {
   if (!state.running) return;
   e.preventDefault();
   const p = getCanvasPoint(e);
+
+  if (state.mode === 'hurricane') {
+    handleHurricaneClick(p);
+    return;
+  }
 
   // Priority 1: Meteors (most urgent — incoming from sky)
   let hitMeteor = null;
@@ -2315,21 +3616,87 @@ canvas.addEventListener('mousedown', handleClick);
 canvas.addEventListener('touchstart', handleClick, { passive: false });
 
 /* ═══════════════════════════════════════════════════
-   Start
+   Start — title screen, mode selection, intro, restart
 ═══════════════════════════════════════════════════ */
+
+const INTRO_COPY = {
+  fire: {
+    title: 'The Fire <em>Brigade</em>',
+    subtitle: 'A recreation in Property &amp; Peril · Bridgeton, N.J.',
+    body1: `Calamity has struck the insured. Flames have broken out across downtown Bridgeton — at Potter's Tavern, the Broad Street Church, the Cumberland Library — and fiery meteors now fall from the heavens besides.`,
+    body2: `You are the Brigade Chief. Preserve the company before its losses exhaust the <strong style="color:var(--burgundy)">$15,000,000 retention</strong>.`,
+    rules:
+      '• <strong>Tap a fire</strong> to direct the pump\'s water upon it.<br>' +
+      '• <strong>Tap a meteor</strong> to strike it from the sky before it lands.<br>' +
+      '• Fires <strong>grow fiercer</strong> each moment — a Grade V inferno consumes the property entire.<br>' +
+      '• Endure <strong>VIII alarms</strong> without exceeding the retention.',
+    startLabel: 'Sound the Alarm',
+  },
+  hurricane: {
+    title: 'The Hurricane <em>Watch</em>',
+    subtitle: 'A recreation in Property &amp; Peril · Ocean City, N.J.',
+    body1: `A Category III tempest steams toward the Jersey Shore. By landfall, the Music Pier, Wonderland Pier's Ferris wheel, the Flanders Hotel, and every boardwalk taffy shop from Shriver's to Manco &amp; Manco will be in its path.`,
+    body2: `You are the Brigade Chief. Prep the boardwalk before the storm makes landfall — and hold the line through the Eye and the backside — before losses exhaust the <strong style="color:var(--burgundy)">$15,000,000 retention</strong>.`,
+    rules:
+      '• <strong>Tap a landmark</strong> to cycle it through three prep stages: <strong>Boards → Sandbags → Evacuate</strong>.<br>' +
+      '• <strong>Tap flying debris</strong> to deflect umbrellas, chairs, and planks before they strike.<br>' +
+      '• <strong>Tap a surge warning</strong> to dispatch a crew to the dune line.<br>' +
+      '• Survive <strong>three phases</strong> and the Eye without exceeding the retention.',
+    startLabel: 'Hoist the Warning Flag',
+  },
+};
+
+function showIntroFor(mode) {
+  state.mode = mode;
+  const copy = INTRO_COPY[mode];
+  document.getElementById('introTitle').innerHTML = copy.title;
+  document.getElementById('introSubtitle').innerHTML = copy.subtitle;
+  document.getElementById('introBody1').innerHTML = copy.body1;
+  document.getElementById('introBody2').innerHTML = copy.body2;
+  document.getElementById('introRules').innerHTML = copy.rules;
+  document.getElementById('startBtn').textContent = copy.startLabel;
+
+  document.getElementById('titleScreen').classList.add('hidden');
+  document.getElementById('startScreen').classList.remove('hidden');
+  document.getElementById('endScreen').classList.add('hidden');
+}
+
+function showTitleScreen() {
+  document.getElementById('titleScreen').classList.remove('hidden');
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('endScreen').classList.add('hidden');
+  // Clear any lingering telegrams from previous game
+  clearTelegrams();
+}
+
+// Wire up mode selector buttons
+document.querySelectorAll('.mode-card').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mode = btn.getAttribute('data-mode');
+    showIntroFor(mode);
+  });
+});
+
 document.getElementById('startBtn').addEventListener('click', () => {
   resizeCanvas();
   startGame();
+});
+document.getElementById('backBtn').addEventListener('click', () => {
+  showTitleScreen();
 });
 document.getElementById('restartBtn').addEventListener('click', () => {
   resizeCanvas();
   startGame();
 });
+document.getElementById('menuBtn').addEventListener('click', () => {
+  showTitleScreen();
+});
 
 // Initial canvas size
 resizeCanvas();
 
-// Idle attract scene — draw a static pump + buildings behind the start screen
+// Idle attract scene — draw a static pump + buildings behind the title screen
+state.mode = 'fire';
 layoutWorld();
 drawSky(ctx);
 drawGround(ctx);
